@@ -69,7 +69,7 @@ private:
 
     Clipper clipper;
     //BitCrusher bitcrusher;
-    //WaveShaper waveshaper;
+    WaveShaper waveshaper;
     //Saturation saturation;
 
     std::array<juce::dsp::Oversampling<float>, 4> overSamplers
@@ -100,6 +100,17 @@ private:
     juce::AudioParameterFloat* clipperInGain{ nullptr };
     juce::AudioParameterFloat* clipperOutGain{ nullptr };
     juce::AudioParameterFloat* clipperMix{ nullptr };
+
+    //WaveShaper Params
+    juce::AudioParameterInt* waveShaperSelect{ nullptr };
+    juce::AudioParameterFloat* waveShaperSin{ nullptr };
+    juce::AudioParameterFloat* waveShaperQuadratic{ nullptr };
+    juce::AudioParameterFloat* waveShaperFactor{ nullptr };
+    juce::AudioParameterFloat* waveShaperGB{ nullptr };
+    juce::AudioParameterFloat* waveShaperInGain{ nullptr };
+    juce::AudioParameterFloat* waveShaperOutGain{ nullptr };
+    juce::AudioParameterFloat* waveShaperMix{ nullptr };
+    std::vector<juce::AudioParameterFloat*> waveShaperFactorsHolder{ waveShaperSin, waveShaperQuadratic, waveShaperFactor, waveShaperGB };
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DistorKAudioProcessor)

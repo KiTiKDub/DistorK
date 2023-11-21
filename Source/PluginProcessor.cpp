@@ -40,6 +40,16 @@ DistorKAudioProcessor::DistorKAudioProcessor()
     clipperOutGain = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("clipperOutGain"));
     clipperMix = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("clipperMix"));
 
+    //WaveShaper Controls
+    waveShaperSelect = dynamic_cast<juce::AudioParameterInt*>(apvts.getParameter("waveShaperSelect"));
+    waveShaperSin = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperSin"));
+    waveShaperQuadratic = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperQuadratic"));
+    waveShaperFactor = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperFactor"));
+    waveShaperGB = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperGB"));
+    waveShaperInGain = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperInGain"));
+    waveShaperOutGain = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperOutGain"));
+    waveShaperMix = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperMix"));
+
 }
 
 DistorKAudioProcessor::~DistorKAudioProcessor()
@@ -125,6 +135,7 @@ void DistorKAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     masterOut.setRampDurationSeconds(.05);
 
     clipper.prepareToPlay(spec);
+    waveshaper.prepareToPlay(spec);
 
     for (auto& oversample : overSamplers)
     {
@@ -193,8 +204,14 @@ void DistorKAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
     //******************************************************************************
 
     clipper.updateParams(clipperSelect->get(), clipperThresh->get(), clipperInGain->get(), clipperOutGain->get(), clipperMix->get());
+
+    waveshaper.updateParams(waveShaperSelect->get(), waveShaperFactorsHolder, waveShaperInGain->get(), waveShaperOutGain->get(), waveShaperMix->get());
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
+    {
         clipper.process(ovBlock, channel);
+        waveshaper.process(ovBlock, channel);
+    }
+        
 
     //==============================================================================
 
@@ -262,6 +279,18 @@ juce::AudioProcessorValueTreeState::ParameterLayout DistorKAudioProcessor::creat
     layout.add(std::make_unique<AudioParameterFloat>("clipperInGain", "In Gain", gainRange, 0));
     layout.add(std::make_unique<AudioParameterFloat>("clipperOutGain", "Out Gain", gainRange, 0));
     layout.add(std::make_unique<AudioParameterFloat>("clipperMix", "Mix", zeroToOne, 1));
+
+    //WaveShaper Controls
+    auto lessThanOne = NormalisableRange<float>(.01, .99, .01, 1);
+    auto moreThanOne = NormalisableRange<float>(.01, 10, .01, 1);
+    layout.add(std::make_unique<AudioParameterInt>("waveShaperSelect", "WaveShaper Type", 0, 5, 0));
+    layout.add(std::make_unique<AudioParameterFloat>("waveShaperSin", "Drive", lessThanOne, 0));
+    layout.add(std::make_unique<AudioParameterFloat>("waveShaperQuadratic", "Drive", moreThanOne, 0));
+    layout.add(std::make_unique<AudioParameterFloat>("waveShaperFactor", "Drive", lessThanOne, 0));
+    layout.add(std::make_unique<AudioParameterFloat>("waveShaperGB", "Drive", moreThanOne, 0));
+    layout.add(std::make_unique<AudioParameterFloat>("waveShaperInGain", "In Gain", gainRange, 0));
+    layout.add(std::make_unique<AudioParameterFloat>("waveShaperOutGain", "Out Gain", gainRange, 0));
+    layout.add(std::make_unique<AudioParameterFloat>("waveShaperMix", "Mix", zeroToOne, 0));
 
     return layout;
 }

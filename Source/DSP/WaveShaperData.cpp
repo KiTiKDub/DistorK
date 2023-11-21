@@ -55,18 +55,22 @@ void WaveShaper::process(juce::dsp::AudioBlock<float>& block, int channel)
     outGain.process(context);
 }
 
-void WaveShaper::updateParams(int typeSelect, std::vector<float>& factors, float inGain, float outGain, float mix)
+void WaveShaper::updateParams(int typeSelect, std::vector<juce::AudioParameterFloat*>& factors, float inGain, float outGain, float mix)
 {
     waveShaperTypeSelect = typeSelect;
-    waveShaperFactors = factors;
     waveShaperInGainValue = inGain;
     waveShaperOutGainValue = outGain;
     waveshaperMix = mix;
+
+    for (int i = 0; i < factors.size(); i++)
+    {
+        waveShaperFactors[i] = factors[i];
+    }
 }
 
 void WaveShaper::processSinusoidal(int channel, juce::dsp::ProcessContextReplacing<float>& context)
 {
-    auto factor = waveShaperFactors[1];
+    auto factor = waveShaperFactors[1]->get();
 
     auto z = juce::MathConstants<float>::pi * factor;
     auto a = (1 / sin(z));
@@ -95,7 +99,7 @@ void WaveShaper::processQuadratic(int channel, juce::dsp::ProcessContextReplacin
     auto* channelInput = context.getInputBlock().getChannelPointer(channel);
     auto* channelOutput = context.getOutputBlock().getChannelPointer(channel);
 
-    auto factor = waveShaperFactors[2];
+    auto factor = waveShaperFactors[2]->get();
 
     for (int s = 0; s < context.getInputBlock().getNumSamples(); ++s)
     {
@@ -109,7 +113,7 @@ void WaveShaper::processFactor(int channel, juce::dsp::ProcessContextReplacing<f
     auto* channelInput = context.getInputBlock().getChannelPointer(channel);
     auto* channelOutput = context.getOutputBlock().getChannelPointer(channel);
 
-    auto vectorFactor = waveShaperFactors[3];
+    auto vectorFactor = waveShaperFactors[3]->get();
     auto factor = 2 * vectorFactor / (1 - vectorFactor);
 
     for (int s = 0; s < context.getInputBlock().getNumSamples(); ++s)
@@ -123,7 +127,7 @@ void WaveShaper::processGB(int channel, juce::dsp::ProcessContextReplacing<float
     auto* channelInput = context.getInputBlock().getChannelPointer(channel);
     auto* channelOutput = context.getOutputBlock().getChannelPointer(channel);
 
-    auto factor = waveShaperFactors[4];
+    auto factor = waveShaperFactors[4]->get();
 
     for (int s = 0; s < context.getInputBlock().getNumSamples(); ++s)
     {
