@@ -103,3 +103,33 @@ void WaveShaper::processQuadratic(int channel, juce::dsp::ProcessContextReplacin
 
     }
 }
+
+void WaveShaper::processFactor(int channel, juce::dsp::ProcessContextReplacing<float>& context)
+{
+    auto* channelInput = context.getInputBlock().getChannelPointer(channel);
+    auto* channelOutput = context.getOutputBlock().getChannelPointer(channel);
+
+    auto vectorFactor = waveShaperFactors[3];
+    auto factor = 2 * vectorFactor / (1 - vectorFactor);
+
+    for (int s = 0; s < context.getInputBlock().getNumSamples(); ++s)
+    {
+        channelOutput[s] = ((1 + factor) * channelInput[s]) / (1 + factor * abs(channelInput[s]));
+    }
+}
+
+void WaveShaper::processGB(int channel, juce::dsp::ProcessContextReplacing<float>& context)
+{
+    auto* channelInput = context.getInputBlock().getChannelPointer(channel);
+    auto* channelOutput = context.getOutputBlock().getChannelPointer(channel);
+
+    auto factor = waveShaperFactors[4];
+
+    for (int s = 0; s < context.getInputBlock().getNumSamples(); ++s)
+    {
+        auto distort = channelInput[s] * factor;
+        auto constant = 1 + exp(sqrt(fabs(distort)) * -0.75);
+
+        channelOutput[s] = (exp(distort) - exp(-distort * constant)) / (exp(distort) + exp(-distort));
+    }
+}
