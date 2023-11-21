@@ -13,8 +13,9 @@
 
 struct Clipper
 {
+    void prepareToPlay(juce::dsp::ProcessSpec& spec);
     void process(juce::dsp::AudioBlock<float>& block, int channel);
-    void updateParams(int mode, float threshold);
+    void updateParams(int mode, float threshold, float gainIn, float gainOut, float mix);
 
 private:
 
@@ -28,6 +29,12 @@ private:
         quintic
     };
 
+    juce::dsp::Gain<float> inGain;
+    juce::dsp::Gain<float> outGain;
+
     int clipperMode;
     float clipperThresh;
+    float clipperGainIn;
+    float clipperGainOut;
+    float clipperMix;
 };

@@ -80,9 +80,11 @@ private:
         {2, 3, juce::dsp::Oversampling<float>::filterHalfBandPolyphaseIIR},
     } };
 
+    //Master DSP & Params
     juce::dsp::Gain<float> masterIn;
     juce::dsp::Gain<float> masterOut;
     
+    juce::AudioParameterBool* bypass{ nullptr };
     juce::AudioParameterBool* selectClip{ nullptr };
     juce::AudioParameterBool* selectBit{ nullptr };
     juce::AudioParameterBool* selectWaveShpr{ nullptr };
@@ -91,6 +93,13 @@ private:
     juce::AudioParameterFloat* masterOutValue{ nullptr };
     juce::AudioParameterFloat* masterMix{ nullptr };
     juce::AudioParameterInt* overSampleSelect{ nullptr };
+
+    //Clipper Params
+    juce::AudioParameterInt* clipperSelect{ nullptr };
+    juce::AudioParameterFloat* clipperThresh{ nullptr };
+    juce::AudioParameterFloat* clipperInGain{ nullptr };
+    juce::AudioParameterFloat* clipperOutGain{ nullptr };
+    juce::AudioParameterFloat* clipperMix{ nullptr };
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DistorKAudioProcessor)

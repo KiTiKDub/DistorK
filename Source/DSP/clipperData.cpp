@@ -10,9 +10,23 @@
 
 #include "ClipperData.h"
 
+void Clipper::prepareToPlay(juce::dsp::ProcessSpec& spec)
+{
+    inGain.reset();
+    inGain.prepare(spec);
+    inGain.setRampDurationSeconds(.05);
+
+    outGain.reset();
+    outGain.prepare(spec);
+    outGain.setRampDurationSeconds(.05);
+}
+
 void Clipper::process(juce::dsp::AudioBlock<float>& block, int channel)
 {
     auto context = juce::dsp::ProcessContextReplacing<float>(block);
+
+    inGain.setGainDecibels(clipperGainIn);
+    inGain.process(context);
 
     auto* channelInput = context.getInputBlock().getChannelPointer(channel);
     auto* channelOutput = context.getOutputBlock().getChannelPointer(channel);
@@ -26,8 +40,9 @@ void Clipper::process(juce::dsp::AudioBlock<float>& block, int channel)
         for (int s = 0; s < len; ++s)
         {
             auto gain = juce::Decibels::decibelsToGain(clipperThresh);
-            channelInput[s] > gain ? channelOutput[s] = gain : channelOutput[s] = channelInput[s];
-            channelInput[s] < -gain ? channelOutput[s] = -gain : channelOutput[s] = channelInput[s];
+            auto drySignal = channelInput[s];
+            channelInput[s] > gain ? channelOutput[s] = (gain * clipperMix) + drySignal * (1 - clipperMix) : channelOutput[s] = channelInput[s];
+            channelInput[s] < -gain ? channelOutput[s] = (-gain * clipperMix) + drySignal * (1 - clipperMix) : channelOutput[s] = channelInput[s];
         }
         break;
 
@@ -36,12 +51,13 @@ void Clipper::process(juce::dsp::AudioBlock<float>& block, int channel)
         {
 
             auto newLimit = juce::Decibels::decibelsToGain(clipperThresh);
+            auto drySignal = channelInput[s];
             auto inverse = 1 / newLimit;
             auto resizeSamples = channelInput[s] * inverse;
             resizeSamples > 1 ? resizeSamples = 1 : resizeSamples = resizeSamples;
             resizeSamples < -1 ? resizeSamples = -1 : resizeSamples = resizeSamples;
             auto cubic = (resizeSamples - pow(resizeSamples, 3) / 3);
-            channelOutput[s] = cubic * newLimit;
+            channelOutput[s] = (cubic * newLimit * clipperMix) + (drySignal * (1 - clipperMix));
         }
         break;
 
@@ -49,13 +65,14 @@ void Clipper::process(juce::dsp::AudioBlock<float>& block, int channel)
         for (int s = 0; s < len; ++s)
         {
             auto newLimit = juce::Decibels::decibelsToGain(clipperThresh);
+            auto drySignal = channelInput[s];
             auto inverse = 1 / newLimit;
             auto resizeSamples = channelInput[s] * inverse;
             resizeSamples > 1 ? resizeSamples = 1 : resizeSamples = resizeSamples;
             resizeSamples < -1 ? resizeSamples = -1 : resizeSamples = resizeSamples;
-            auto sinosidal = std::sin(3 * juce::MathConstants<float>::pi * resizeSamples / 4);
+            auto sinosidal = std::sin(1 * juce::MathConstants<float>::pi * resizeSamples / 3);
 
-            channelOutput[s] = sinosidal * newLimit;
+            channelOutput[s] = (sinosidal * newLimit * clipperMix) + (drySignal * (1 - clipperMix));
         }
         break;
 
@@ -63,12 +80,13 @@ void Clipper::process(juce::dsp::AudioBlock<float>& block, int channel)
         for (int s = 0; s < len; s++)
         {
             auto newLimit = juce::Decibels::decibelsToGain(clipperThresh);
+            auto drySignal = channelInput[s];
             auto inverse = 1 / newLimit;
             auto resizeSamples = channelInput[s] * inverse;
             resizeSamples > 1 ? resizeSamples = 1 : resizeSamples = resizeSamples;
             resizeSamples < -1 ? resizeSamples = -1 : resizeSamples = resizeSamples;
-            auto hyperTan = tanh(5 * resizeSamples) * (3 / juce::MathConstants<float>::pi);
-            channelOutput[s] = hyperTan * newLimit;
+            auto hyperTan = tanh(resizeSamples);
+            channelOutput[s] = (hyperTan * newLimit * clipperMix) + (drySignal * (1 - clipperMix));
         }
         break;
 
@@ -76,12 +94,13 @@ void Clipper::process(juce::dsp::AudioBlock<float>& block, int channel)
         for (int s = 0; s < len; ++s)
         {
             auto newLimit = juce::Decibels::decibelsToGain(clipperThresh);
+            auto drySignal = channelInput[s];
             auto inverse = 1 / newLimit;
             auto resizeSamples = channelInput[s] * inverse;
             resizeSamples > 1 ? resizeSamples = 1 : resizeSamples = resizeSamples;
             resizeSamples < -1 ? resizeSamples = -1 : resizeSamples = resizeSamples;
-            auto arcTan = atan(5 * resizeSamples) * (2 / juce::MathConstants<float>::pi);
-            channelOutput[s] = arcTan * newLimit;
+            auto arcTan = atan(resizeSamples);
+            channelOutput[s] = (arcTan * newLimit * clipperMix) + (drySignal * (1 - clipperMix));
         }
         break;
 
@@ -89,21 +108,28 @@ void Clipper::process(juce::dsp::AudioBlock<float>& block, int channel)
         for (int s = 0; s < len; ++s)
         {
             auto newLimit = juce::Decibels::decibelsToGain(clipperThresh);
+            auto drySignal = channelInput[s];
             auto inverse = 1 / newLimit;
             auto resizeSamples = channelInput[s] * inverse;
             resizeSamples > 1 ? resizeSamples = 1 : resizeSamples = resizeSamples;
             resizeSamples < -1 ? resizeSamples = -1 : resizeSamples = resizeSamples;
             auto quintic = resizeSamples - pow(resizeSamples, 5) / 5;
-            channelOutput[s] = quintic * newLimit;
+            channelOutput[s] = (quintic * newLimit * clipperMix) + (drySignal * (1 - clipperMix));
         }
         break;
     }
 
 
+    outGain.setGainDecibels(clipperGainOut);
+    outGain.process(context);
+
 }
 
-void Clipper::updateParams(int mode, float threshold)
+void Clipper::updateParams(int mode, float threshold, float gainIn, float gainOut, float mix)
 {
     clipperMode = mode;
     clipperThresh = threshold;
+    clipperGainIn = gainIn;
+    clipperGainOut = gainOut;
+    clipperMix = mix;
 }

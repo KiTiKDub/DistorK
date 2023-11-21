@@ -64,7 +64,7 @@ void RotarySliderWithLabels::paint(juce::Graphics& g) {
 
         if (pos == 1) //Will need to do something based on ratios. Normal sliders this does not work for 2 & 4
         {
-            c = center.getPointOnCircumference(radius + textHeight + extraPush, 0); //this may also be bad for smaller sliders
+            c = center.getPointOnCircumference(radius /*+ textHeight + extraPush*/, 0); //this may also be bad for smaller sliders
             r.setCentre(c);
         }
         else if (pos == 2)

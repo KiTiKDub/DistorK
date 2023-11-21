@@ -22,6 +22,8 @@ DistorKAudioProcessor::DistorKAudioProcessor()
                        )
 #endif
 {
+    //Master Controls
+    bypass = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("bypass"));
     selectClip = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("selectClip"));
     selectBit = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("selectBit"));
     selectWaveShpr = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("selectWaveShpr"));
@@ -30,6 +32,13 @@ DistorKAudioProcessor::DistorKAudioProcessor()
     masterOutValue = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("masterOutValue"));
     masterMix = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("masterMix"));
     overSampleSelect = dynamic_cast<juce::AudioParameterInt*>(apvts.getParameter("overSampleSelect"));
+
+    //Clipper Controls
+    clipperSelect = dynamic_cast<juce::AudioParameterInt*>(apvts.getParameter("clipperSelect"));
+    clipperThresh = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("clipperThresh"));
+    clipperInGain = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("clipperInGain"));
+    clipperOutGain = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("clipperOutGain"));
+    clipperMix = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("clipperMix"));
 
 }
 
@@ -115,6 +124,8 @@ void DistorKAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     masterOut.prepare(spec);
     masterOut.setRampDurationSeconds(.05);
 
+    clipper.prepareToPlay(spec);
+
     for (auto& oversample : overSamplers)
     {
         oversample.reset();
@@ -161,15 +172,41 @@ void DistorKAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-        buffer.clear (i, 0, buffer.getNumSamples());
+    if (bypass->get()) { return; }
 
+    levelMeterData.process(true, 0, buffer);
+    levelMeterData.process(true, 1, buffer);
+
+    auto inputBlock = juce::dsp::AudioBlock<float>(buffer);
+    auto inputContext = juce::dsp::ProcessContextReplacing<float>(inputBlock);
+
+    masterIn.setGainDecibels(masterInValue->get());
+    masterIn.process(inputContext);
+
+    auto ovRate = overSampleSelect->get();
+
+    auto ovBlock = overSamplers[ovRate].processSamplesUp(inputBlock);
+    auto ovContext = juce::dsp::ProcessContextReplacing<float>(ovBlock);
+
+    //==============================================================================
+    //NON MASTER PROCESSING HERE
+    //******************************************************************************
+
+    clipper.updateParams(clipperSelect->get(), clipperThresh->get(), clipperInGain->get(), clipperOutGain->get(), clipperMix->get());
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        auto* channelData = buffer.getWritePointer (channel);
+        clipper.process(ovBlock, channel);
 
-        // ..do something to the data...
-    }
+    //==============================================================================
+
+    auto& outputBlock = inputContext.getOutputBlock();
+    overSamplers[ovRate].processSamplesDown(outputBlock);
+
+    masterOut.setGainDecibels(masterOutValue->get());
+    masterOut.process(inputContext);
+
+    levelMeterData.process(false, 0, buffer);
+    levelMeterData.process(false, 1, buffer);
+    
 }
 
 //==============================================================================
@@ -204,9 +241,11 @@ juce::AudioProcessorValueTreeState::ParameterLayout DistorKAudioProcessor::creat
 
     AudioProcessorValueTreeState::ParameterLayout layout;
 
+    //universal ranges
     auto gainRange = NormalisableRange<float>(-24, 24, .1, 1);
     auto zeroToOne = NormalisableRange<float>(0, 1, .01, 1);
 
+    //Master Controls
     layout.add(std::make_unique<AudioParameterBool>("selectClip", "Clipper", false));
     layout.add(std::make_unique<AudioParameterBool>("selectBit", "BitCrusher", false));
     layout.add(std::make_unique<AudioParameterBool>("selectWaveShpr", "WaveShaper", false));
@@ -215,6 +254,14 @@ juce::AudioProcessorValueTreeState::ParameterLayout DistorKAudioProcessor::creat
     layout.add(std::make_unique<AudioParameterFloat>("masterOutValue", "Output", gainRange, 0));
     layout.add(std::make_unique<AudioParameterFloat>("masterMix", "Mix", zeroToOne, 1));
     layout.add(std::make_unique<AudioParameterInt>("overSampleSelect", "Oversample Rate", 0, 3, 0));
+
+    //Clipper Controls
+    auto threshRange = NormalisableRange<float>(-60, 0, .1, 1);
+    layout.add(std::make_unique<AudioParameterInt>("clipperSelect", "Clipper Type", 0, 5, 0));
+    layout.add(std::make_unique<AudioParameterFloat>("clipperThresh", "Threshold", threshRange, 0));
+    layout.add(std::make_unique<AudioParameterFloat>("clipperInGain", "In Gain", gainRange, 0));
+    layout.add(std::make_unique<AudioParameterFloat>("clipperOutGain", "Out Gain", gainRange, 0));
+    layout.add(std::make_unique<AudioParameterFloat>("clipperMix", "Mix", zeroToOne, 1));
 
     return layout;
 }

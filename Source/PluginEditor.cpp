@@ -75,11 +75,11 @@ void DistorKAudioProcessorEditor::resized()
     auto selectArea = bounds.removeFromBottom(bounds.getHeight() * .15);
     auto masterArea = bounds.removeFromRight(bounds.getWidth() * .3);
 
-    auto t1Area = selectArea.removeFromLeft(bounds.getWidth() * .2);
-    auto t2Area = selectArea.removeFromLeft(bounds.getWidth() * .25);
-    auto osArea = selectArea.removeFromLeft(bounds.getWidth() * .33);
-    auto t3Area = selectArea.removeFromLeft(bounds.getWidth() * .5);
-    auto t4Area = selectArea;
+    auto t1Area = selectArea.removeFromLeft(selectArea.getWidth() * .2);
+    auto t2Area = selectArea.removeFromLeft(selectArea.getWidth() * .25);
+    auto osArea = selectArea.removeFromLeft(selectArea.getWidth() * .33);
+    auto t3Area = selectArea.removeFromLeft(selectArea.getWidth() * .5);
+    auto t4Area = selectArea.removeFromLeft(selectArea.getWidth());
 
     selectSat.setBounds(t1Area);
     selectClip.setBounds(t2Area);
@@ -91,7 +91,7 @@ void DistorKAudioProcessorEditor::resized()
 void DistorKAudioProcessorEditor::attachRSWL()
 {
     auto& osParam = getParam(audioProcessor.apvts, "overSampleSelect");
-    oversampleSelect = std::make_unique<RotarySliderWithLabels>(&osParam, "dB", "OverSampling");
+    oversampleSelect = std::make_unique<RotarySliderWithLabels>(&osParam, "", "OverSampling");
     makeAttachment(oversampleSelectAT, audioProcessor.apvts, "overSampleSelect", *oversampleSelect);
     addLabelPairs(oversampleSelect->labels, 1, 3, osParam, "", oversamplingText);
 
