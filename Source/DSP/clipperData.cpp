@@ -23,6 +23,8 @@ void Clipper::prepareToPlay(juce::dsp::ProcessSpec& spec)
 
 void Clipper::process(juce::dsp::AudioBlock<float>& block, int channel)
 {
+    if (clipperBypass) { return; };
+
     auto context = juce::dsp::ProcessContextReplacing<float>(block);
 
     inGain.setGainDecibels(clipperGainIn);
@@ -125,8 +127,9 @@ void Clipper::process(juce::dsp::AudioBlock<float>& block, int channel)
 
 }
 
-void Clipper::updateParams(int mode, float threshold, float gainIn, float gainOut, float mix)
+void Clipper::updateParams(bool bypass, int mode, float threshold, float gainIn, float gainOut, float mix)
 {
+    clipperBypass = bypass;
     clipperMode = mode;
     clipperThresh = threshold;
     clipperGainIn = gainIn;

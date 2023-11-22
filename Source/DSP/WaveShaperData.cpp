@@ -23,6 +23,8 @@ void WaveShaper::prepareToPlay(juce::dsp::ProcessSpec& spec)
 
 void WaveShaper::process(juce::dsp::AudioBlock<float>& block, int channel)
 {
+    if (waveShaperBypass) { return; };
+
     auto context = juce::dsp::ProcessContextReplacing<float>(block);
 
     inGain.setGainDecibels(waveShaperInGainValue);
@@ -55,8 +57,9 @@ void WaveShaper::process(juce::dsp::AudioBlock<float>& block, int channel)
     outGain.process(context);
 }
 
-void WaveShaper::updateParams(int typeSelect, std::vector<juce::AudioParameterFloat*>& factors, float inGain, float outGain, float mix)
+void WaveShaper::updateParams(bool bypass, int typeSelect, std::vector<juce::AudioParameterFloat*>& factors, float inGain, float outGain, float mix)
 {
+    waveShaperBypass = bypass;
     waveShaperTypeSelect = typeSelect;
     waveShaperInGainValue = inGain;
     waveShaperOutGainValue = outGain;

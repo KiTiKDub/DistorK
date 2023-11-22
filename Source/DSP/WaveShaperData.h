@@ -14,7 +14,7 @@ struct WaveShaper
 {
     void prepareToPlay(juce::dsp::ProcessSpec& spec);
     void process(juce::dsp::AudioBlock<float>& block, int channel);
-    void updateParams(int typeSelect, std::vector<juce::AudioParameterFloat*>& factors, float inGain, float outGain, float mix);
+    void updateParams(bool bypass, int typeSelect, std::vector<juce::AudioParameterFloat*>& factors, float inGain, float outGain, float mix);
 
 private:
 
@@ -34,6 +34,7 @@ private:
     juce::dsp::Gain<float> inGain;
     juce::dsp::Gain<float> outGain;
 
+    bool waveShaperBypass;
     int waveShaperTypeSelect;
     std::vector<juce::AudioParameterFloat*> waveShaperFactors;
     float waveShaperInGainValue;

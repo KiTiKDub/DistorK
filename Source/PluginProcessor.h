@@ -84,16 +84,19 @@ private:
     juce::dsp::Gain<float> masterIn;
     juce::dsp::Gain<float> masterOut;
     
-    juce::AudioParameterBool* bypass{ nullptr };
+    juce::AudioParameterBool* globalBypass{ nullptr };
     juce::AudioParameterBool* selectClip{ nullptr };
+    juce::AudioParameterBool* bypassClip{ nullptr };
     juce::AudioParameterBool* selectBit{ nullptr };
+    juce::AudioParameterBool* bypassBit{ nullptr };
     juce::AudioParameterBool* selectWaveShpr{ nullptr };
+    juce::AudioParameterBool* bypassWaveShpr{ nullptr };
     juce::AudioParameterBool* selectSat{ nullptr };
+    juce::AudioParameterBool* bypassSat{ nullptr };
     juce::AudioParameterFloat* masterInValue{ nullptr };
     juce::AudioParameterFloat* masterOutValue{ nullptr };
     juce::AudioParameterFloat* masterMix{ nullptr };
     juce::AudioParameterInt* overSampleSelect{ nullptr };
-    //add bypass for global controls
 
     //Clipper Params
     juce::AudioParameterInt* clipperSelect{ nullptr };

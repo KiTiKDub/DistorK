@@ -15,13 +15,14 @@ struct BitCrusher
 {
     void prepareToPlay(juce::dsp::ProcessSpec& spec);
     void process(juce::dsp::AudioBlock<float>& block, int channel);
-    void updateParams(int bitDepth, int bitRate, float inGain, float outGain, float mix);
+    void updateParams(bool bypass, int bitDepth, int bitRate, float inGain, float outGain, float mix);
 
 private:
     
     juce::dsp::Gain<float> inGain;
     juce::dsp::Gain<float> outGain;
 
+    bool crusherBypass;
     int crusherBitDepth;
     int crusherBitRate;
     float crusherInGain;

@@ -23,11 +23,15 @@ DistorKAudioProcessor::DistorKAudioProcessor()
 #endif
 {
     //Master Controls
-    bypass = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("bypass"));
+    globalBypass = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("bypass"));
     selectClip = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("selectClip"));
+    bypassClip = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("bypassClip"));
     selectBit = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("selectBit"));
+    bypassBit = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("bypassBit"));
     selectWaveShpr = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("selectWaveShpr"));
+    bypassWaveShpr = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("bypassWaveShpr"));
     selectSat = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("selectSat"));
+    bypassSat = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("bypassSat"));
     masterInValue = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("masterInValue"));
     masterOutValue = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("masterOutValue"));
     masterMix = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("masterMix"));
@@ -197,7 +201,7 @@ void DistorKAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    if (bypass->get()) { return; }
+    if (globalBypass->get()) { return; }
 
     levelMeterData.process(true, 0, buffer);
     levelMeterData.process(true, 1, buffer);
@@ -209,7 +213,6 @@ void DistorKAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
     masterIn.process(inputContext);
 
     auto ovRate = overSampleSelect->get();
-
     auto ovBlock = overSamplers[ovRate].processSamplesUp(inputBlock);
     auto ovContext = juce::dsp::ProcessContextReplacing<float>(ovBlock);
 
@@ -217,10 +220,10 @@ void DistorKAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
     //NON MASTER PROCESSING HERE
     //******************************************************************************
 
-    clipper.updateParams(clipperSelect->get(), clipperThresh->get(), clipperInGain->get(), clipperOutGain->get(), clipperMix->get());
-    waveshaper.updateParams(waveShaperSelect->get(), waveShaperFactorsHolder, waveShaperInGain->get(), waveShaperOutGain->get(), waveShaperMix->get());
-    bitcrusher.updateParams(crusherBitDepth->get(), crusherBitRate->get(), crusherInGain->get(), crusherOutGain->get(), crusherMix->get());
-    saturation.updateParams(satDrive->get(), satInGain->get(), satOutGain->get(), satMix->get());
+    clipper.updateParams(bypassClip->get(), clipperSelect->get(), clipperThresh->get(), clipperInGain->get(), clipperOutGain->get(), clipperMix->get());
+    waveshaper.updateParams(bypassWaveShpr->get(), waveShaperSelect->get(), waveShaperFactorsHolder, waveShaperInGain->get(), waveShaperOutGain->get(), waveShaperMix->get());
+    bitcrusher.updateParams(bypassBit->get(), crusherBitDepth->get(), crusherBitRate->get(), crusherInGain->get(), crusherOutGain->get(), crusherMix->get());
+    saturation.updateParams(bypassSat->get(), satDrive->get(), satInGain->get(), satOutGain->get(), satMix->get());
 
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
@@ -283,9 +286,13 @@ juce::AudioProcessorValueTreeState::ParameterLayout DistorKAudioProcessor::creat
 
     //Master Controls
     layout.add(std::make_unique<AudioParameterBool>("selectClip", "Clipper", false));
+    layout.add(std::make_unique<AudioParameterBool>("bypassClip", "Bypass Clip", false));
     layout.add(std::make_unique<AudioParameterBool>("selectBit", "BitCrusher", false));
+    layout.add(std::make_unique<AudioParameterBool>("bypassBit", "Bypass Bit", false));
     layout.add(std::make_unique<AudioParameterBool>("selectWaveShpr", "WaveShaper", false));
+    layout.add(std::make_unique<AudioParameterBool>("bypassWaveShpr", "Bypass WS", false));
     layout.add(std::make_unique<AudioParameterBool>("selectSat", "Saturation", true));
+    layout.add(std::make_unique<AudioParameterBool>("bypassSat", "Bypass Sat", false));
     layout.add(std::make_unique<AudioParameterFloat>("masterInValue", "Input", gainRange, 0));
     layout.add(std::make_unique<AudioParameterFloat>("masterOutValue", "Output", gainRange, 0));
     layout.add(std::make_unique<AudioParameterFloat>("masterMix", "Dry/Wet", zeroToOne, 1));

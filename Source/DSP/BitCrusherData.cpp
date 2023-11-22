@@ -23,6 +23,8 @@ void BitCrusher::prepareToPlay(juce::dsp::ProcessSpec& spec)
 
 void BitCrusher::process(juce::dsp::AudioBlock<float>& block, int channel)
 {
+    if (crusherBypass) { return; };
+
     auto context = juce::dsp::ProcessContextReplacing<float>(block);
 
     auto channelInput = context.getInputBlock().getChannelPointer(channel);
@@ -53,8 +55,9 @@ void BitCrusher::process(juce::dsp::AudioBlock<float>& block, int channel)
     outGain.process(context);
 }
 
-void BitCrusher::updateParams(int bitDepth, int bitRate, float inGain, float outGain, float mix)
+void BitCrusher::updateParams(bool bypass, int bitDepth, int bitRate, float inGain, float outGain, float mix)
 {
+    crusherBypass = bypass;
     crusherBitDepth = bitDepth;
     crusherBitRate = bitRate;
     crusherInGain = inGain;
