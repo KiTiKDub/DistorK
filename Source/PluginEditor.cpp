@@ -11,32 +11,11 @@
 
 //==============================================================================
 DistorKAudioProcessorEditor::DistorKAudioProcessorEditor (DistorKAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p),
-    selectClipAT(audioProcessor.apvts, "selectClip", selectClip),
-    selectBitAT(audioProcessor.apvts, "selectBit", selectBit),
-    selectWaveShprAT(audioProcessor.apvts, "selectWaveShpr", selectWaveShpr),
-    selectSatAT(audioProcessor.apvts, "selectSat", selectSat)
+    : AudioProcessorEditor (&p), audioProcessor (p)
 {
     setLookAndFeel(&lnf);
 
-    attachRSWL();
-    addAndMakeVisible(*oversampleSelect);
-
-    addAndMakeVisible(selectClip);
-    addAndMakeVisible(selectBit);
-    addAndMakeVisible(selectWaveShpr);
-    addAndMakeVisible(selectSat);
-
-    selectClip.onClick = [this] { updateToggleState(&selectClip); };
-    selectBit.onClick = [this] { updateToggleState(&selectBit); };
-    selectWaveShpr.onClick = [this] { updateToggleState(&selectWaveShpr); };
-    selectSat.onClick = [this] { updateToggleState(&selectSat); };
-
-    selectClip.setRadioGroupId(1);
-    selectBit.setRadioGroupId(1);
-    selectWaveShpr.setRadioGroupId(1);
-    selectSat.setRadioGroupId(1);
-    
+    addAndMakeVisible(toggleComp);
 
     setSize (700, 500);
 }
@@ -75,33 +54,9 @@ void DistorKAudioProcessorEditor::resized()
     auto selectArea = bounds.removeFromBottom(bounds.getHeight() * .15);
     auto masterArea = bounds.removeFromRight(bounds.getWidth() * .3);
 
-    auto t1Area = selectArea.removeFromLeft(selectArea.getWidth() * .2);
-    auto t2Area = selectArea.removeFromLeft(selectArea.getWidth() * .25);
-    auto osArea = selectArea.removeFromLeft(selectArea.getWidth() * .33);
-    auto t3Area = selectArea.removeFromLeft(selectArea.getWidth() * .5);
-    auto t4Area = selectArea.removeFromLeft(selectArea.getWidth());
-
-    selectSat.setBounds(t1Area);
-    selectClip.setBounds(t2Area);
-    oversampleSelect.get()->setBounds(osArea);
-    selectWaveShpr.setBounds(t3Area);
-    selectBit.setBounds(t4Area);
+    toggleComp.setBounds(selectArea);
 }
 
-void DistorKAudioProcessorEditor::attachRSWL()
-{
-    auto& osParam = getParam(audioProcessor.apvts, "overSampleSelect");
-    oversampleSelect = std::make_unique<RotarySliderWithLabels>(&osParam, "", "OverSampling");
-    makeAttachment(oversampleSelectAT, audioProcessor.apvts, "overSampleSelect", *oversampleSelect);
-    addLabelPairs(oversampleSelect->labels, 1, 3, osParam, "", oversamplingText);
 
-    oversampleSelect.get()->onValueChange = [this, &osParam]()
-        {
-            addLabelPairs(oversampleSelect->labels, 1, 3, osParam, "", oversamplingText);
-        };
-}
 
-void DistorKAudioProcessorEditor::updateToggleState(juce::Button* button)
-{
-    auto state = button->getToggleState();
-}
+
