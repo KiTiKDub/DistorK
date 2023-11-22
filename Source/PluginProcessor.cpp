@@ -23,7 +23,7 @@ DistorKAudioProcessor::DistorKAudioProcessor()
 #endif
 {
     //Master Controls
-    globalBypass = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("bypass"));
+    globalBypass = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("globalBypass"));
     selectClip = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("selectClip"));
     bypassClip = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("bypassClip"));
     selectBit = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("selectBit"));
@@ -220,6 +220,7 @@ void DistorKAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
     //NON MASTER PROCESSING HERE
     //******************************************************************************
 
+    //probably make update params method
     clipper.updateParams(bypassClip->get(), clipperSelect->get(), clipperThresh->get(), clipperInGain->get(), clipperOutGain->get(), clipperMix->get());
     waveshaper.updateParams(bypassWaveShpr->get(), waveShaperSelect->get(), waveShaperFactorsHolder, waveShaperInGain->get(), waveShaperOutGain->get(), waveShaperMix->get());
     bitcrusher.updateParams(bypassBit->get(), crusherBitDepth->get(), crusherBitRate->get(), crusherInGain->get(), crusherOutGain->get(), crusherMix->get());
@@ -227,7 +228,6 @@ void DistorKAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
 
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
-        //Need to add toggles to these.
         clipper.process(ovBlock, channel);
         waveshaper.process(ovBlock, channel);
         bitcrusher.process(ovBlock, channel);
@@ -285,6 +285,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout DistorKAudioProcessor::creat
     auto zeroToOne = NormalisableRange<float>(0, 1, .01, 1);
 
     //Master Controls
+    layout.add(std::make_unique<AudioParameterBool>("globalBypass", "Global Bypass", false));
     layout.add(std::make_unique<AudioParameterBool>("selectClip", "Clipper", false));
     layout.add(std::make_unique<AudioParameterBool>("bypassClip", "Bypass Clip", false));
     layout.add(std::make_unique<AudioParameterBool>("selectBit", "BitCrusher", false));
@@ -319,8 +320,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout DistorKAudioProcessor::creat
     layout.add(std::make_unique<AudioParameterFloat>("waveShaperMix", "Dry/Wet", zeroToOne, 0));
 
     //BitCrusher Controls
-    layout.add(std::make_unique<AudioParameterInt>("bitDepth", "Bit Depth", 1, 16, 16));
-    layout.add(std::make_unique<AudioParameterInt>("bitRate", "Bit Rate", 1, 25, 1));
+    layout.add(std::make_unique<AudioParameterInt>("crusherBitDepth", "Bit Depth", 1, 16, 16));
+    layout.add(std::make_unique<AudioParameterInt>("crusherBitRate", "Bit Rate", 1, 25, 1));
     layout.add(std::make_unique<AudioParameterFloat>("crusherInGain", "In Gain", gainRange, 1));
     layout.add(std::make_unique<AudioParameterFloat>("crusherOutGain", "Out Gain", gainRange, 1));
     layout.add(std::make_unique<AudioParameterFloat>("crusherMix", "Dry/Wet", zeroToOne, 1));
