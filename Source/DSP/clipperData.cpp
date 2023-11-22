@@ -99,7 +99,7 @@ void Clipper::process(juce::dsp::AudioBlock<float>& block, int channel)
             auto resizeSamples = channelInput[s] * inverse;
             resizeSamples > 1 ? resizeSamples = 1 : resizeSamples = resizeSamples;
             resizeSamples < -1 ? resizeSamples = -1 : resizeSamples = resizeSamples;
-            auto arcTan = atan(resizeSamples);
+            auto arcTan = atan(resizeSamples * juce::MathConstants<float>::pi /2) * (2/ juce::MathConstants<float>::pi);
             channelOutput[s] = (arcTan * newLimit * clipperMix) + (drySignal * (1 - clipperMix));
         }
         break;

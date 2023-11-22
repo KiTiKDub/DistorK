@@ -68,9 +68,9 @@ public:
 private:
 
     Clipper clipper;
-    //BitCrusher bitcrusher;
+    BitCrusher bitcrusher;
     WaveShaper waveshaper;
-    //Saturation saturation;
+    Saturation saturation;
 
     std::array<juce::dsp::Oversampling<float>, 4> overSamplers
     { {
@@ -93,6 +93,7 @@ private:
     juce::AudioParameterFloat* masterOutValue{ nullptr };
     juce::AudioParameterFloat* masterMix{ nullptr };
     juce::AudioParameterInt* overSampleSelect{ nullptr };
+    //add bypass for global controls
 
     //Clipper Params
     juce::AudioParameterInt* clipperSelect{ nullptr };
@@ -111,6 +112,19 @@ private:
     juce::AudioParameterFloat* waveShaperOutGain{ nullptr };
     juce::AudioParameterFloat* waveShaperMix{ nullptr };
     std::vector<juce::AudioParameterFloat*> waveShaperFactorsHolder{ waveShaperSin, waveShaperQuadratic, waveShaperFactor, waveShaperGB };
+
+    //BitCrusher Params
+    juce::AudioParameterInt* crusherBitDepth{ nullptr };
+    juce::AudioParameterInt* crusherBitRate{ nullptr };
+    juce::AudioParameterFloat* crusherInGain{ nullptr };
+    juce::AudioParameterFloat* crusherOutGain{ nullptr };
+    juce::AudioParameterFloat* crusherMix{ nullptr };
+
+    //Saturation Params
+    juce::AudioParameterFloat* satDrive{ nullptr };
+    juce::AudioParameterFloat* satInGain{ nullptr };
+    juce::AudioParameterFloat* satOutGain{ nullptr };
+    juce::AudioParameterFloat* satMix{ nullptr };
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DistorKAudioProcessor)

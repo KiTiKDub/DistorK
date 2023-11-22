@@ -50,6 +50,18 @@ DistorKAudioProcessor::DistorKAudioProcessor()
     waveShaperOutGain = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperOutGain"));
     waveShaperMix = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperMix"));
 
+    //BitCrusher Controls
+    crusherBitDepth = dynamic_cast<juce::AudioParameterInt*>(apvts.getParameter("crusherBitDepth"));
+    crusherBitRate = dynamic_cast<juce::AudioParameterInt*>(apvts.getParameter("crusherBitRate"));
+    crusherInGain = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("crusherInGain"));
+    crusherOutGain = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("crusherOutGain"));
+    crusherMix = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("crusherMix"));
+
+    //Saturator Controls
+    satDrive = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("satDrive"));
+    satInGain = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("satInGain"));
+    satOutGain = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("satOutGain"));
+    satMix = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("satMix"));
 }
 
 DistorKAudioProcessor::~DistorKAudioProcessor()
@@ -136,6 +148,8 @@ void DistorKAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
 
     clipper.prepareToPlay(spec);
     waveshaper.prepareToPlay(spec);
+    bitcrusher.prepareToPlay(spec);
+    saturation.prepareToPlay(spec);
 
     for (auto& oversample : overSamplers)
     {
@@ -204,12 +218,17 @@ void DistorKAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
     //******************************************************************************
 
     clipper.updateParams(clipperSelect->get(), clipperThresh->get(), clipperInGain->get(), clipperOutGain->get(), clipperMix->get());
-
     waveshaper.updateParams(waveShaperSelect->get(), waveShaperFactorsHolder, waveShaperInGain->get(), waveShaperOutGain->get(), waveShaperMix->get());
+    bitcrusher.updateParams(crusherBitDepth->get(), crusherBitRate->get(), crusherInGain->get(), crusherOutGain->get(), crusherMix->get());
+    saturation.updateParams(satDrive->get(), satInGain->get(), satOutGain->get(), satMix->get());
+
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
+        //Need to add toggles to these.
         clipper.process(ovBlock, channel);
         waveshaper.process(ovBlock, channel);
+        bitcrusher.process(ovBlock, channel);
+        saturation.process(ovBlock, channel);
     }
         
 
@@ -269,7 +288,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout DistorKAudioProcessor::creat
     layout.add(std::make_unique<AudioParameterBool>("selectSat", "Saturation", true));
     layout.add(std::make_unique<AudioParameterFloat>("masterInValue", "Input", gainRange, 0));
     layout.add(std::make_unique<AudioParameterFloat>("masterOutValue", "Output", gainRange, 0));
-    layout.add(std::make_unique<AudioParameterFloat>("masterMix", "Mix", zeroToOne, 1));
+    layout.add(std::make_unique<AudioParameterFloat>("masterMix", "Dry/Wet", zeroToOne, 1));
     layout.add(std::make_unique<AudioParameterInt>("overSampleSelect", "Oversample Rate", 0, 3, 0));
 
     //Clipper Controls
@@ -278,7 +297,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout DistorKAudioProcessor::creat
     layout.add(std::make_unique<AudioParameterFloat>("clipperThresh", "Threshold", threshRange, 0));
     layout.add(std::make_unique<AudioParameterFloat>("clipperInGain", "In Gain", gainRange, 0));
     layout.add(std::make_unique<AudioParameterFloat>("clipperOutGain", "Out Gain", gainRange, 0));
-    layout.add(std::make_unique<AudioParameterFloat>("clipperMix", "Mix", zeroToOne, 1));
+    layout.add(std::make_unique<AudioParameterFloat>("clipperMix", "Dry/Wet", zeroToOne, 1));
 
     //WaveShaper Controls
     auto lessThanOne = NormalisableRange<float>(.01, .99, .01, 1);
@@ -290,7 +309,21 @@ juce::AudioProcessorValueTreeState::ParameterLayout DistorKAudioProcessor::creat
     layout.add(std::make_unique<AudioParameterFloat>("waveShaperGB", "Drive", moreThanOne, 0));
     layout.add(std::make_unique<AudioParameterFloat>("waveShaperInGain", "In Gain", gainRange, 0));
     layout.add(std::make_unique<AudioParameterFloat>("waveShaperOutGain", "Out Gain", gainRange, 0));
-    layout.add(std::make_unique<AudioParameterFloat>("waveShaperMix", "Mix", zeroToOne, 0));
+    layout.add(std::make_unique<AudioParameterFloat>("waveShaperMix", "Dry/Wet", zeroToOne, 0));
+
+    //BitCrusher Controls
+    layout.add(std::make_unique<AudioParameterInt>("bitDepth", "Bit Depth", 1, 16, 16));
+    layout.add(std::make_unique<AudioParameterInt>("bitRate", "Bit Rate", 1, 25, 1));
+    layout.add(std::make_unique<AudioParameterFloat>("crusherInGain", "In Gain", gainRange, 1));
+    layout.add(std::make_unique<AudioParameterFloat>("crusherOutGain", "Out Gain", gainRange, 1));
+    layout.add(std::make_unique<AudioParameterFloat>("crusherMix", "Dry/Wet", zeroToOne, 1));
+
+    //Saturation Controls
+    auto driveRange = NormalisableRange<float>(1, 10, .1, 1);
+    layout.add(std::make_unique<AudioParameterFloat>("satDrive", "Drive", driveRange, 1));
+    layout.add(std::make_unique<AudioParameterFloat>("satInGain", "In Gain", gainRange, 1));
+    layout.add(std::make_unique<AudioParameterFloat>("satOutGain", "Out Gain", gainRange, 1));
+    layout.add(std::make_unique<AudioParameterFloat>("satMix", "Dry/Wet", gainRange, 1));
 
     return layout;
 }
