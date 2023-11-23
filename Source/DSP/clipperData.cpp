@@ -134,5 +134,5 @@ void Clipper::updateParams(bool bypass, int mode, float threshold, float gainIn,
     clipperThresh = threshold;
     clipperGainIn = gainIn;
     clipperGainOut = gainOut;
-    clipperMix = mix;
+    clipperMix = mix/100;
 }

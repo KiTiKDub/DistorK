@@ -62,5 +62,5 @@ void BitCrusher::updateParams(bool bypass, int bitDepth, int bitRate, float inGa
     crusherBitRate = bitRate;
     crusherInGain = inGain;
     crusherOutGain = outGain;
-    crusherMix = mix;
+    crusherMix = mix/100;
 }

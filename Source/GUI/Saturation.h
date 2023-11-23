@@ -9,3 +9,23 @@
 */
 
 #pragma once
+#include <JuceHeader.h>
+#include "rotarySliderWithLabels.h"
+
+struct SaturationComp : public juce::Component
+{
+    SaturationComp(juce::AudioProcessorValueTreeState& apvts);
+    ~SaturationComp();
+
+    void paint(juce::Graphics& g) override;
+    void resized() override;
+
+private:
+
+    void updateRSWL(juce::AudioProcessorValueTreeState& apvts);
+
+    std::unique_ptr<RotarySliderWithLabels> drive, inGain, outGain, mix;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> driveAT, inGainAT, outGainAT, mixAT;
+
+    std::vector<juce::String> empty;
+};

@@ -64,7 +64,7 @@ void WaveShaper::updateParams(bool bypass, int typeSelect, std::vector<juce::Aud
     waveShaperFactors = factors;
     waveShaperInGainValue = inGain;
     waveShaperOutGainValue = outGain;
-    waveshaperMix = mix;
+    waveshaperMix = mix/100;
 }
 
 void WaveShaper::processSinusoidal(int channel, juce::dsp::ProcessContextReplacing<float>& context)

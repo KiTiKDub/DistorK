@@ -21,7 +21,6 @@ toggleWaveShprAT(apvts, "bypassWaveShpr", toggleWaveShpr),
 toggleSatAT(apvts, "bypassSat", toggleSat)
 
 {
-    //setLookAndFeel(&lnf);
 
     attachRSWL(apvts);
     addAndMakeVisible(*oversampleSelect);
@@ -58,21 +57,7 @@ ToggleComp::~ToggleComp()
 
 void ToggleComp::paint(juce::Graphics& g)
 {
-    //g.fillAll(juce::Colours::black);
 
-    //auto bounds = getLocalBounds();
-
-    //g.setColour(juce::Colours::white);
-    //g.setFont(15.0f);
-
-    //auto selectArea = bounds.removeFromBottom(bounds.getHeight() * .15);
-    //auto masterArea = bounds.removeFromRight(bounds.getWidth() * .3);
-    //g.drawRect(selectArea);
-    //g.drawRect(masterArea);
-
-    ////g.drawFittedText("Select Area", selectArea.toNearestInt(), juce::Justification::centred, 1);
-    //g.drawFittedText("Master Area", masterArea.toNearestInt(), juce::Justification::centred, 1);
-    //g.drawFittedText("DistorK", bounds.toNearestInt(), juce::Justification::centred, 1);
 }
 
 void ToggleComp::resized()

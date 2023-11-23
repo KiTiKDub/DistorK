@@ -39,6 +39,10 @@ void RotarySliderWithLabels::paint(juce::Graphics& g) {
     g.setColour(Colours::white);
     g.setFont(14);
 
+    g.drawRect(sliderBounds);
+    g.setColour(juce::Colours::orange);
+    g.drawRect(bounds);
+
     auto numChoices = labels.size();
 
     for(int i = 0; i < numChoices; ++i)
@@ -60,7 +64,7 @@ void RotarySliderWithLabels::paint(juce::Graphics& g) {
             textHeight *= 2;
         };
         
-        r.setSize(strWidth, textHeight);
+        r.setSize(strWidth, textHeight); //draww text on edge of slider bounds, or create a slightly bigger bounds and draw them on that
 
         if (pos == 1) //Will need to do something based on ratios. Normal sliders this does not work for 2 & 4
         {
@@ -94,7 +98,7 @@ juce::Rectangle<int> RotarySliderWithLabels::getSliderBounds() const {
 
     auto bounds = getLocalBounds();
 
-    auto reduceWidth = juce::jmax(bounds.getWidth() * .15, (double)18);
+    auto reduceWidth = juce::jmax(bounds.getWidth() * .15, (double)18); //Need to reduce this so that they are square
     auto reduceHeight = juce::jmax(bounds.getHeight() * .15, (double)18);
     auto boundsShrink = bounds.reduced(reduceWidth, reduceHeight);
 

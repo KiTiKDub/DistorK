@@ -49,6 +49,6 @@ void Saturation::updateParams(bool bypass, float drive, float inGain, float outG
     satDrive = drive;
     satInGain = inGain;
     satOutGain = outGain;
-    satMix = mix;
+    satMix = mix/100;
 }
 
