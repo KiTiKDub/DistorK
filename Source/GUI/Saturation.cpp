@@ -32,8 +32,8 @@ void SaturationComp::paint(juce::Graphics& g)
 
     auto bigKnob = bounds.removeFromTop(bounds.getHeight() * .7);
 
-    auto leftSide = bounds.removeFromLeft(bounds.getWidth() * .2);
-    auto rightSide = bounds.removeFromRight(bounds.getWidth() * .25);
+    auto leftSide = bounds.removeFromLeft(bounds.getWidth() * .33);
+    auto rightSide = bounds.removeFromRight(bounds.getWidth() * .5);
 
     /*g.drawRect(leftSide);
     g.drawRect(rightSide);
@@ -44,11 +44,11 @@ void SaturationComp::resized()
 {
     auto bounds = getLocalBounds();
 
-    auto bigKnob = bounds.removeFromTop(bounds.getHeight() * .7);
+    auto bigKnob = bounds.removeFromTop(bounds.getHeight() * .8);
     drive->setBounds(bigKnob);
 
-    auto leftSide = bounds.removeFromLeft(bounds.getWidth() * .2);
-    auto rightSide = bounds.removeFromRight(bounds.getWidth() * .25);
+    auto leftSide = bounds.removeFromLeft(bounds.getWidth() * .33);
+    auto rightSide = bounds.removeFromRight(bounds.getWidth() * .5);
 
     inGain->setBounds(leftSide);
     outGain->setBounds(rightSide);
@@ -73,14 +73,14 @@ void SaturationComp::updateRSWL(juce::AudioProcessorValueTreeState& apvts)
     makeAttachment(mixAT, apvts, "satMix", *mix);
     makeAttachment(outGainAT, apvts, "satOutGain", *outGain);
 
-    addLabelPairs(inGain->labels, 1, 2, inGainParam, " dB", empty);
+    addLabelPairs(inGain->labels, 1, 3, inGainParam, " dB", empty);
     addLabelPairs(drive->labels, 1, 3, driveParam, "", empty);
-    addLabelPairs(mix->labels, 4, 2, mixParam, "%", empty);
-    addLabelPairs(outGain->labels, 1, 4, outGainParam, " dB", empty);
+    addLabelPairs(mix->labels, 1, 3, mixParam, "%", empty);
+    addLabelPairs(outGain->labels, 1, 3, outGainParam, " dB", empty);
 
     inGain.get()->onValueChange = [this, &inGainParam]()
         {
-            addLabelPairs(inGain->labels, 1, 2, inGainParam, " dB", empty);
+            addLabelPairs(inGain->labels, 1, 3, inGainParam, " dB", empty);
         };
     drive.get()->onValueChange = [this, &driveParam]()
         {
@@ -88,10 +88,10 @@ void SaturationComp::updateRSWL(juce::AudioProcessorValueTreeState& apvts)
         };
     mix.get()->onValueChange = [this, &mixParam]()
         {
-            addLabelPairs(mix->labels, 4, 2, mixParam, "%", empty);
+            addLabelPairs(mix->labels, 1, 3, mixParam, "%", empty);
         };
     outGain.get()->onValueChange = [this, &outGainParam]()
         {
-            addLabelPairs(outGain->labels, 1, 4, outGainParam, " dB", empty);
+            addLabelPairs(outGain->labels, 1, 3, outGainParam, " dB", empty);
         };
 }
