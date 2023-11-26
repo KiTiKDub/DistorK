@@ -329,8 +329,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout DistorKAudioProcessor::creat
     //Saturation Controls
     auto driveRange = NormalisableRange<float>(1, 10, .1, 1);
     layout.add(std::make_unique<AudioParameterFloat>("satDrive", "Drive", driveRange, 1));
-    layout.add(std::make_unique<AudioParameterFloat>("satInGain", "In Gain", gainRange, 1));
-    layout.add(std::make_unique<AudioParameterFloat>("satOutGain", "Out Gain", gainRange, 1));
+    layout.add(std::make_unique<AudioParameterFloat>("satInGain", "In Gain", gainRange, 0));
+    layout.add(std::make_unique<AudioParameterFloat>("satOutGain", "Out Gain", gainRange, 0));
     layout.add(std::make_unique<AudioParameterFloat>("satMix", "Dry/Wet", mixRange, 100));
 
     return layout;

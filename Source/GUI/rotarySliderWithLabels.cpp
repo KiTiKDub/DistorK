@@ -33,16 +33,13 @@ void RotarySliderWithLabels::paint(juce::Graphics& g) {
         endAng,
         *this);
 
-    auto textBounds = getTextBounds(sliderBounds);
-    auto center = textBounds.toFloat().getCentre();
-    auto radius = textBounds.getHeight() * .5f;
+    auto center = sliderBounds.toFloat().getCentre();
+    auto radius = sliderBounds.getHeight() * .5f;
 
     g.setColour(Colours::white);
-    g.setFont(14);
 
     //g.drawRect(sliderBounds);
-    g.setColour(juce::Colours::orange);
-    //g.drawRect(textBounds);
+    //g.setColour(juce::Colours::orange);
     //g.drawRect(bounds);
 
     auto numChoices = labels.size();
@@ -55,16 +52,10 @@ void RotarySliderWithLabels::paint(juce::Graphics& g) {
 
         auto pos = labels[i].pos;
         auto str = labels[i].label;
+        auto textHeight = labels[i].fontSize;
+        g.setFont(textHeight);
         auto strWidth = g.getCurrentFont().getStringWidth(str);
-        auto textHeight = getTextHeight();
         float extraPush = 0;
-
-        /*if (strWidth > 90) 
-        { 
-            strWidth = 90;
-            extraPush = textHeight;
-            textHeight *= 2;
-        };*/
         
         r.setSize(strWidth, textHeight); //draww text on edge of slider bounds, or create a slightly bigger bounds and draw them on that
 
@@ -81,7 +72,7 @@ void RotarySliderWithLabels::paint(juce::Graphics& g) {
         }
         else if (pos == 3)
         {
-            c = center.getPointOnCircumference(radius /*- (radius*(1-std::sqrt(2)/2))*/, MathConstants<float>::pi);
+            c = center.getPointOnCircumference(radius, MathConstants<float>::pi);
             r.setCentre(c);
         }
         else 
@@ -102,25 +93,11 @@ juce::Rectangle<int> RotarySliderWithLabels::getSliderBounds() const {
 
     auto reduceWidth = juce::jmax(bounds.getWidth() * .15, (double)18); //Need to reduce this so that they are square
     auto reduceHeight = juce::jmax(bounds.getHeight() * .15, (double)18);
-    //auto square = juce::jmin(bounds.getHeight() * .15, bounds.getWidth() * .15);
-    //auto boundsShrink = bounds.reduced(square, square);
     auto boundsShrink = bounds.reduced(reduceWidth, reduceHeight);
 
     return boundsShrink;
 }
 
-juce::Rectangle<int> RotarySliderWithLabels::getTextBounds(juce::Rectangle<int>& sliderBounds) const
-{
-    auto bounds = getLocalBounds();
-    auto widthExp = 0;
-    auto heightExp = 0;
-
-    //if (heightExp < getTextHeight()/2) { heightExp = getTextHeight()/2; }
-
-    auto boundsExpand = sliderBounds.expanded(widthExp, heightExp);
-
-    return boundsExpand;
-}
 
 void RotarySliderWithLabels::changeParam(juce::RangedAudioParameter* p)
 {

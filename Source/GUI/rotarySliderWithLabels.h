@@ -21,8 +21,9 @@ struct RotarySliderWithLabels : juce::Slider {
     }
 
     struct LabelPos {
-        float pos;
+        int pos;
         juce::String label;
+        int fontSize;
 
     };
 
@@ -30,7 +31,6 @@ struct RotarySliderWithLabels : juce::Slider {
 
     void paint(juce::Graphics& g) override;
     juce::Rectangle<int> getSliderBounds() const;
-    juce::Rectangle<int> getTextBounds(juce::Rectangle<int>& sliderBounds) const;
     int getTextHeight() const { return 14; };
 
     void changeParam(juce::RangedAudioParameter* p);
@@ -73,11 +73,11 @@ template <
     typename ParamType,
     typename SuffixType
 >
-void addLabelPairs(Labels& labels, const float posOne, const float posTwo, const ParamType& param, const SuffixType& suffix, std::vector<juce::String> array)
+void addLabelPairs(Labels& labels, const int posOne, const int posTwo, const ParamType& param, const SuffixType& suffix, const int size, std::vector<juce::String> array)
 {
     labels.clear();
-    labels.add({ posOne, getValString(param, true, suffix, array) });
-    labels.add({ posTwo, getValString(param, false, suffix, array) });
+    labels.add({ posOne, getValString(param, true, suffix, array), size });
+    labels.add({ posTwo, getValString(param, false, suffix, array), size });
 }
 
 juce::String getValString(const juce::RangedAudioParameter& param, bool getLow, juce::String suffix, std::vector<juce::String>);

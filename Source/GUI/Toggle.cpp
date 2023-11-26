@@ -9,6 +9,7 @@
 */
 
 #include "Toggle.h"
+#define NORMAL_FONT_SIZE 14
 
 ToggleComp::ToggleComp(juce::AudioProcessorValueTreeState& apvts) :
 selectClipAT(apvts, "selectClip", selectClip),
@@ -94,11 +95,11 @@ void ToggleComp::attachRSWL(juce::AudioProcessorValueTreeState& apvts)
     auto& osParam = getParam(apvts, "overSampleSelect");
     oversampleSelect = std::make_unique<RotarySliderWithLabels>(&osParam, "", "OverSampling");
     makeAttachment(oversampleSelectAT, apvts, "overSampleSelect", *oversampleSelect);
-    addLabelPairs(oversampleSelect->labels, 1, 3, osParam, "", oversamplingText);
+    addLabelPairs(oversampleSelect->labels, 1, 3, osParam, "", NORMAL_FONT_SIZE, oversamplingText);
 
     oversampleSelect.get()->onValueChange = [this, &osParam]()
         {
-            addLabelPairs(oversampleSelect->labels, 1, 3, osParam, "", oversamplingText);
+            addLabelPairs(oversampleSelect->labels, 1, 3, osParam, "", NORMAL_FONT_SIZE, oversamplingText);
         };
 }
 

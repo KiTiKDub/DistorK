@@ -10,6 +10,8 @@
 
 #include "Saturation.h"
 
+#define NORMAL_FONT_SIZE 14
+
 SaturationComp::SaturationComp(juce::AudioProcessorValueTreeState& apvts)
 {
     updateRSWL(apvts);
@@ -73,25 +75,25 @@ void SaturationComp::updateRSWL(juce::AudioProcessorValueTreeState& apvts)
     makeAttachment(mixAT, apvts, "satMix", *mix);
     makeAttachment(outGainAT, apvts, "satOutGain", *outGain);
 
-    addLabelPairs(inGain->labels, 1, 3, inGainParam, " dB", empty);
-    addLabelPairs(drive->labels, 1, 3, driveParam, "", empty);
-    addLabelPairs(mix->labels, 1, 3, mixParam, "%", empty);
-    addLabelPairs(outGain->labels, 1, 3, outGainParam, " dB", empty);
+    addLabelPairs(inGain->labels, 1, 3, inGainParam, " dB", NORMAL_FONT_SIZE, empty);
+    addLabelPairs(drive->labels, 1, 3, driveParam, "", 24, empty);
+    addLabelPairs(mix->labels, 1, 3, mixParam, "%", NORMAL_FONT_SIZE, empty);
+    addLabelPairs(outGain->labels, 1, 3, outGainParam, " dB", NORMAL_FONT_SIZE, empty);
 
     inGain.get()->onValueChange = [this, &inGainParam]()
         {
-            addLabelPairs(inGain->labels, 1, 3, inGainParam, " dB", empty);
+            addLabelPairs(inGain->labels, 1, 3, inGainParam, " dB", NORMAL_FONT_SIZE, empty);
         };
     drive.get()->onValueChange = [this, &driveParam]()
         {
-            addLabelPairs(drive->labels, 1, 3, driveParam, "", empty);
+            addLabelPairs(drive->labels, 1, 3, driveParam, "", 24, empty);
         };
     mix.get()->onValueChange = [this, &mixParam]()
         {
-            addLabelPairs(mix->labels, 1, 3, mixParam, "%", empty);
+            addLabelPairs(mix->labels, 1, 3, mixParam, "%", NORMAL_FONT_SIZE, empty);
         };
     outGain.get()->onValueChange = [this, &outGainParam]()
         {
-            addLabelPairs(outGain->labels, 1, 3, outGainParam, " dB", empty);
+            addLabelPairs(outGain->labels, 1, 3, outGainParam, " dB", NORMAL_FONT_SIZE, empty);
         };
 }
