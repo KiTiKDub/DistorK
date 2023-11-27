@@ -69,7 +69,7 @@ void WaveShaper::updateParams(bool bypass, int typeSelect, std::vector<juce::Aud
 
 void WaveShaper::processSinusoidal(int channel, juce::dsp::ProcessContextReplacing<float>& context)
 {
-    auto factor = waveShaperFactors[1]->get();
+    auto factor = waveShaperFactors[0]->get();
 
     auto z = juce::MathConstants<float>::pi * factor;
     auto a = (1 / sin(z));
@@ -94,11 +94,10 @@ void WaveShaper::processSinusoidal(int channel, juce::dsp::ProcessContextReplaci
 
 void WaveShaper::processQuadratic(int channel, juce::dsp::ProcessContextReplacing<float>& context)
 {
-
     auto* channelInput = context.getInputBlock().getChannelPointer(channel);
     auto* channelOutput = context.getOutputBlock().getChannelPointer(channel);
 
-    auto factor = waveShaperFactors[2]->get();
+    auto factor = waveShaperFactors[1]->get();
 
     for (int s = 0; s < context.getInputBlock().getNumSamples(); ++s)
     {
@@ -112,7 +111,7 @@ void WaveShaper::processFactor(int channel, juce::dsp::ProcessContextReplacing<f
     auto* channelInput = context.getInputBlock().getChannelPointer(channel);
     auto* channelOutput = context.getOutputBlock().getChannelPointer(channel);
 
-    auto vectorFactor = waveShaperFactors[3]->get();
+    auto vectorFactor = waveShaperFactors[2]->get();
     auto factor = 2 * vectorFactor / (1 - vectorFactor);
 
     for (int s = 0; s < context.getInputBlock().getNumSamples(); ++s)
@@ -126,7 +125,7 @@ void WaveShaper::processGB(int channel, juce::dsp::ProcessContextReplacing<float
     auto* channelInput = context.getInputBlock().getChannelPointer(channel);
     auto* channelOutput = context.getOutputBlock().getChannelPointer(channel);
 
-    auto factor = waveShaperFactors[4]->get();
+    auto factor = waveShaperFactors[3]->get();
 
     for (int s = 0; s < context.getInputBlock().getNumSamples(); ++s)
     {

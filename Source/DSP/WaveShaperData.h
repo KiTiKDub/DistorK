@@ -24,7 +24,6 @@ private:
     void processGB(int channel, juce::dsp::ProcessContextReplacing<float>& context);
 
     enum WaveShaperSelect {
-        none,
         sinusoidal,
         quadratic,
         factor,

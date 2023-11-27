@@ -12,19 +12,15 @@
 
 WaveShaperComp::WaveShaperComp(juce::AudioProcessorValueTreeState& apvts)
 {
-    
+    updateRSWL(apvts);
+
     addAndMakeVisible(*select);
-    //addAndMakeVisible(*distort);
+    addAndMakeVisible(*distort);
     addAndMakeVisible(*inGain);
     addAndMakeVisible(*mix);
     addAndMakeVisible(*outGain);
-
-    select.get()->onValueChange = [this, &apvts]
-        {
-            updateAttachments(apvts);
-        };
-
-    updateRSWL(apvts);
+ 
+    updateAttachments(apvts);
 }
 
 WaveShaperComp::~WaveShaperComp()
@@ -71,11 +67,11 @@ void WaveShaperComp::updateRSWL(juce::AudioProcessorValueTreeState& apvts)
     makeAttachment(inGainAT, apvts, "waveShaperInGain", *inGain);
     makeAttachment(selectAT, apvts, "waveShaperSelect", *select);
     makeAttachment(distortAT, apvts, "waveShaperSin", *distort);
-    makeAttachment(mixAT, apvts, "crusherMix", *mix);
-    makeAttachment(outGainAT, apvts, "crusherOutGain", *outGain);
+    makeAttachment(mixAT, apvts, "waveShaperMix", *mix);
+    makeAttachment(outGainAT, apvts, "waveShaperOutGain", *outGain);
 
     addLabelPairs(inGain->labels, 1, 3, inGainParam, " dB");
-    addLabelPairs(select->labels, 1, 3, selectParam, "", 20);
+    addLabelPairs(select->labels, 1, 3, selectParam, "", 20, typeText);
     addLabelPairs(distort->labels, 1, 3, distortParm, "", 20);
     addLabelPairs(mix->labels, 1, 3, mixParam, "%");
     addLabelPairs(outGain->labels, 1, 3, outGainParam, " dB");
@@ -84,9 +80,10 @@ void WaveShaperComp::updateRSWL(juce::AudioProcessorValueTreeState& apvts)
         {
             addLabelPairs(inGain->labels, 1, 3, inGainParam, " dB");
         };
-    select.get()->onValueChange = [this, &selectParam]()
+    select.get()->onValueChange = [this, &selectParam, &apvts]()
         {
-            addLabelPairs(select->labels, 1, 3, selectParam, "", 20);
+            addLabelPairs(select->labels, 1, 3, selectParam, "", 20, typeText);
+            updateAttachments(apvts);
         };
     distort.get()->onValueChange = [this, &distortParm]()
         {
@@ -111,24 +108,35 @@ void WaveShaperComp::updateAttachments(juce::AudioProcessorValueTreeState& apvts
 
     if (param == 1)
     {
-        newID = apvts.getParameter("waveShaperSin")->getParameterID();
+        newID = "waveShaperSin";
     }
     else if (param == 2)
     {
-        newID = apvts.getParameter("waveShaperQuadratic")->getParameterID();
+        newID = "waveShaperQuadratic";
     }
     else if (param == 3)
     {
-        newID = apvts.getParameter("waveShaperFactor")->getParameterID();
+        newID = "waveShaperFactor";
     }
     else
     {
-        newID = apvts.getParameter("waveShaperGB")->getParameterID();
+        newID = "waveShaperGB";
     }
 
     
     auto& distortParm = getParam(apvts, newID);
-    distort = std::make_unique<RotarySliderWithLabels>(&distortParm, "", "Distortion Factor");
+    distort.get()->changeParam(&distortParm);
     makeAttachment(distortAT, apvts, newID, *distort);
     addLabelPairs(distort->labels, 1, 3, distortParm, "", 20);
+
+    distort.get()->onValueChange = [this, &distortParm]()
+        {
+            addLabelPairs(distort->labels, 1, 3, distortParm, "", 20);
+        };
+    
+}
+
+void WaveShaperComp::updateSelectLabels()
+{
+
 }

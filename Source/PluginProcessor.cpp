@@ -46,10 +46,10 @@ DistorKAudioProcessor::DistorKAudioProcessor()
 
     //WaveShaper Controls
     waveShaperSelect = dynamic_cast<juce::AudioParameterInt*>(apvts.getParameter("waveShaperSelect"));
-    waveShaperSin = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperSin"));
-    waveShaperQuadratic = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperQuadratic"));
-    waveShaperFactor = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperFactor"));
-    waveShaperGB = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperGB"));
+    waveShaperFactorsHolder[0] = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperSin"));
+    waveShaperFactorsHolder[1] = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperQuadratic"));
+    waveShaperFactorsHolder[2] = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperFactor"));
+    waveShaperFactorsHolder[3] = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperGB"));
     waveShaperInGain = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperInGain"));
     waveShaperOutGain = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperOutGain"));
     waveShaperMix = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperMix"));
@@ -234,7 +234,6 @@ void DistorKAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
         saturation.process(ovBlock, channel);
     }
         
-
     //==============================================================================
 
     auto& outputBlock = inputContext.getOutputBlock();
@@ -310,7 +309,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout DistorKAudioProcessor::creat
     //WaveShaper Controls
     auto lessThanOne = NormalisableRange<float>(.01, .99, .01, 1);
     auto moreThanOne = NormalisableRange<float>(.01, 10, .01, 1);
-    layout.add(std::make_unique<AudioParameterInt>("waveShaperSelect", "WaveShaper Type", 0, 5, 0));
+    layout.add(std::make_unique<AudioParameterInt>("waveShaperSelect", "WaveShaper Type", 0, 3, 0));
     layout.add(std::make_unique<AudioParameterFloat>("waveShaperSin", "Drive", lessThanOne, 0));
     layout.add(std::make_unique<AudioParameterFloat>("waveShaperQuadratic", "Drive", moreThanOne, 0));
     layout.add(std::make_unique<AudioParameterFloat>("waveShaperFactor", "Drive", lessThanOne, 0));
