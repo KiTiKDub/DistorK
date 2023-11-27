@@ -15,6 +15,7 @@
 #include "GUI/Toggle.h"
 #include "GUI/Saturation.h"
 #include "GUI/BitCrusher.h"
+#include "GUI/Clipper.h"
 
 //==============================================================================
 /**
@@ -40,6 +41,7 @@ private:
     ToggleComp toggleComp{ audioProcessor.apvts };
     SaturationComp satComp{ audioProcessor.apvts };
     BitCrusherComp bitComp{ audioProcessor.apvts };
+    ClipperComp clipperComp{ audioProcessor.apvts };
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DistorKAudioProcessorEditor)

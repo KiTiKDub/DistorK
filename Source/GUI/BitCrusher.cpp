@@ -69,8 +69,8 @@ void BitCrusherComp::updateRSWL(juce::AudioProcessorValueTreeState& apvts)
     makeAttachment(outGainAT, apvts, "crusherOutGain", *outGain);
 
     addLabelPairs(inGain->labels, 1, 3, inGainParam, " dB"); 
-    addLabelPairs(rate->labels, 1, 3, rateParam, "", 50);
-    addLabelPairs(depth->labels, 1, 3, depthParam, "", 50);
+    addLabelPairs(rate->labels, 1, 3, rateParam, "", 20);
+    addLabelPairs(depth->labels, 1, 3, depthParam, "", 20);
     addLabelPairs(mix->labels, 1, 3, mixParam, "%");
     addLabelPairs(outGain->labels, 1, 3, outGainParam, " dB");
 
