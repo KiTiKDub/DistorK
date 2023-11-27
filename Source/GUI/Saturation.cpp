@@ -75,25 +75,25 @@ void SaturationComp::updateRSWL(juce::AudioProcessorValueTreeState& apvts)
     makeAttachment(mixAT, apvts, "satMix", *mix);
     makeAttachment(outGainAT, apvts, "satOutGain", *outGain);
 
-    addLabelPairs(inGain->labels, 1, 3, inGainParam, " dB", NORMAL_FONT_SIZE, empty);
-    addLabelPairs(drive->labels, 1, 3, driveParam, "", 24, empty);
-    addLabelPairs(mix->labels, 1, 3, mixParam, "%", NORMAL_FONT_SIZE, empty);
-    addLabelPairs(outGain->labels, 1, 3, outGainParam, " dB", NORMAL_FONT_SIZE, empty);
+    addLabelPairs(inGain->labels, 1, 3, inGainParam, " dB"); //lets add default values here instead of using constants
+    addLabelPairs(drive->labels, 1, 3, driveParam, "", 24);
+    addLabelPairs(mix->labels, 1, 3, mixParam, "%");
+    addLabelPairs(outGain->labels, 1, 3, outGainParam, " dB");
 
     inGain.get()->onValueChange = [this, &inGainParam]()
         {
-            addLabelPairs(inGain->labels, 1, 3, inGainParam, " dB", NORMAL_FONT_SIZE, empty);
+            addLabelPairs(inGain->labels, 1, 3, inGainParam, " dB");
         };
     drive.get()->onValueChange = [this, &driveParam]()
         {
-            addLabelPairs(drive->labels, 1, 3, driveParam, "", 24, empty);
+            addLabelPairs(drive->labels, 1, 3, driveParam, "", 24);
         };
     mix.get()->onValueChange = [this, &mixParam]()
         {
-            addLabelPairs(mix->labels, 1, 3, mixParam, "%", NORMAL_FONT_SIZE, empty);
+            addLabelPairs(mix->labels, 1, 3, mixParam, "%");
         };
     outGain.get()->onValueChange = [this, &outGainParam]()
         {
-            addLabelPairs(outGain->labels, 1, 3, outGainParam, " dB", NORMAL_FONT_SIZE, empty);
+            addLabelPairs(outGain->labels, 1, 3, outGainParam, " dB");
         };
 }

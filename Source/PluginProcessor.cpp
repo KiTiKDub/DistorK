@@ -322,8 +322,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout DistorKAudioProcessor::creat
     //BitCrusher Controls
     layout.add(std::make_unique<AudioParameterInt>("crusherBitDepth", "Bit Depth", 1, 16, 16));
     layout.add(std::make_unique<AudioParameterInt>("crusherBitRate", "Bit Rate", 1, 25, 1));
-    layout.add(std::make_unique<AudioParameterFloat>("crusherInGain", "In Gain", gainRange, 1));
-    layout.add(std::make_unique<AudioParameterFloat>("crusherOutGain", "Out Gain", gainRange, 1));
+    layout.add(std::make_unique<AudioParameterFloat>("crusherInGain", "In Gain", gainRange, 0));
+    layout.add(std::make_unique<AudioParameterFloat>("crusherOutGain", "Out Gain", gainRange, 0));
     layout.add(std::make_unique<AudioParameterFloat>("crusherMix", "Dry/Wet", mixRange, 100));
 
     //Saturation Controls

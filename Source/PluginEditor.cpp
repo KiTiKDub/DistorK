@@ -16,7 +16,8 @@ DistorKAudioProcessorEditor::DistorKAudioProcessorEditor (DistorKAudioProcessor&
     setLookAndFeel(&lnf);
 
     addAndMakeVisible(toggleComp);
-    addAndMakeVisible(satComp);
+    //addAndMakeVisible(satComp);
+    addAndMakeVisible(bitComp);
 
     setSize (700, 500);
 }
@@ -57,7 +58,8 @@ void DistorKAudioProcessorEditor::resized()
 
     toggleComp.setBounds(selectArea);
 
-    satComp.setBounds(bounds);
+    //satComp.setBounds(bounds);
+    bitComp.setBounds(bounds);
 }
 
 

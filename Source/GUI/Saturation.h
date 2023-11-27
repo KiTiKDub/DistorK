@@ -26,6 +26,4 @@ private:
 
     std::unique_ptr<RotarySliderWithLabels> drive, inGain, outGain, mix;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> driveAT, inGainAT, outGainAT, mixAT;
-
-    std::vector<juce::String> empty;
 };

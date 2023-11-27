@@ -9,3 +9,21 @@
 */
 
 #pragma once
+#include <JuceHeader.h>
+#include "rotarySliderWithLabels.h"
+
+struct BitCrusherComp : public juce::Component
+{
+    BitCrusherComp(juce::AudioProcessorValueTreeState& apvts);
+    ~BitCrusherComp();
+
+    void paint(juce::Graphics& g) override;
+    void resized() override;
+
+private:
+
+    void updateRSWL(juce::AudioProcessorValueTreeState& apvts);
+
+    std::unique_ptr<RotarySliderWithLabels> depth, rate, inGain, mix, outGain;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> depthAT, rateAT, inGainAT, mixAT, outGainAT;
+};
