@@ -69,7 +69,7 @@ void ClipperComp::updateRSWL(juce::AudioProcessorValueTreeState& apvts)
     makeAttachment(outGainAT, apvts, "clipperOutGain", *outGain);
 
     addLabelPairs(inGain->labels, 1, 3, inGainParam, " dB");
-    addLabelPairs(select->labels, 1, 3, selectParam, "", 24);
+    addLabelPairs(select->labels, 1, 3, selectParam, "", 24, typeText);
     addLabelPairs(mix->labels, 1, 3, mixParam, "%");
     addLabelPairs(outGain->labels, 1, 3, outGainParam, " dB");
 
@@ -79,7 +79,7 @@ void ClipperComp::updateRSWL(juce::AudioProcessorValueTreeState& apvts)
         };
     select.get()->onValueChange = [this, &selectParam]()
         {
-            addLabelPairs(select->labels, 1, 3, selectParam, "", 24);
+            addLabelPairs(select->labels, 1, 3, selectParam, "", 24, typeText);
         };
     mix.get()->onValueChange = [this, &mixParam]()
         {

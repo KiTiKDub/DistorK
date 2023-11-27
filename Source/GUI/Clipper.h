@@ -30,4 +30,6 @@ private:
 
     juce::Slider threshold{ "Threshold" };
     juce::AudioProcessorValueTreeState::SliderAttachment thresholdAT;
+
+    std::vector<juce::String> typeText{ "Hard", "Soft", "Sine", "Hyperbolic Tan", "Arc Tan", "Quintic"};
 };
