@@ -16,6 +16,7 @@
 #include "GUI/Saturation.h"
 #include "GUI/BitCrusher.h"
 #include "GUI/Clipper.h"
+#include "GUI/WaveShaper.h"
 
 //==============================================================================
 /**
@@ -42,6 +43,7 @@ private:
     SaturationComp satComp{ audioProcessor.apvts };
     BitCrusherComp bitComp{ audioProcessor.apvts };
     ClipperComp clipperComp{ audioProcessor.apvts };
+    WaveShaperComp wsComp{ audioProcessor.apvts };
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DistorKAudioProcessorEditor)

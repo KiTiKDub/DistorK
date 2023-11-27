@@ -53,20 +53,20 @@ void ClipperComp::resized()
 
 void ClipperComp::updateRSWL(juce::AudioProcessorValueTreeState& apvts)
 {
-    auto& inGainParam = getParam(apvts, "satInGain");
+    auto& inGainParam = getParam(apvts, "clipperInGain");
     auto& selectParam = getParam(apvts, "clipperSelect");
-    auto& mixParam = getParam(apvts, "satMix");
-    auto& outGainParam = getParam(apvts, "satOutGain");
+    auto& mixParam = getParam(apvts, "clipperMix");
+    auto& outGainParam = getParam(apvts, "clipperOutGain");
 
     inGain = std::make_unique<RotarySliderWithLabels>(&inGainParam, "dB", "In Gain");
     select = std::make_unique<RotarySliderWithLabels>(&selectParam, "", "Select");
     mix = std::make_unique<RotarySliderWithLabels>(&mixParam, "%", "Mix");
     outGain = std::make_unique<RotarySliderWithLabels>(&outGainParam, "dB", "Out Gain");
 
-    makeAttachment(inGainAT, apvts, "satInGain", *inGain);
+    makeAttachment(inGainAT, apvts, "clipperInGain", *inGain);
     makeAttachment(selectAT, apvts, "clipperSelect", *select);
-    makeAttachment(mixAT, apvts, "satMix", *mix);
-    makeAttachment(outGainAT, apvts, "satOutGain", *outGain);
+    makeAttachment(mixAT, apvts, "clipperMix", *mix);
+    makeAttachment(outGainAT, apvts, "clipperOutGain", *outGain);
 
     addLabelPairs(inGain->labels, 1, 3, inGainParam, " dB");
     addLabelPairs(select->labels, 1, 3, selectParam, "", 24);
