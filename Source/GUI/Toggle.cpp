@@ -27,9 +27,13 @@ toggleSatAT(apvts, "bypassSat", toggleSat)
     addAndMakeVisible(*oversampleSelect);
 
     addAndMakeVisible(selectClip);
+    selectClip.setComponentID("Select");
     addAndMakeVisible(selectBit);
+    selectBit.setComponentID("Select");
     addAndMakeVisible(selectWaveShpr);
+    selectWaveShpr.setComponentID("Select");
     addAndMakeVisible(selectSat);
+    selectSat.setComponentID("Select");
 
     addAndMakeVisible(toggleClip);
     toggleClip.setComponentID("Power");

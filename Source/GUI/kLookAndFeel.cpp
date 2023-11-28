@@ -106,6 +106,29 @@ void Laf::drawToggleButton(juce::Graphics& g, juce::ToggleButton& button,
         g.drawEllipse(r, 2);
 
     }
+    else if (button.getComponentID() == "Select")
+    {
+        auto fullBounds = button.getLocalBounds();
+
+        auto bounds = button.getLocalBounds().reduced(20);
+        auto size = juce::jmin(bounds.getWidth(), bounds.getHeight() - 6);
+        auto innerSize = size * .8;
+        auto c1 = bounds.withSizeKeepingCentre(size, size).toFloat();
+        auto translate = fullBounds.getHeight() * .05;
+        c1.translate(0, -translate);
+        auto c2 = bounds.withSizeKeepingCentre(innerSize, innerSize).toFloat();
+        c2.translate(0, -translate);
+
+        g.setColour(juce::Colours::red);
+        g.drawEllipse(c1, 2);
+
+        auto color = button.getToggleState() ? juce::Colours::red : juce::Colours::transparentBlack;
+        g.setColour(color);
+        g.fillEllipse(c2);
+
+        g.setColour(juce::Colours::white);
+        g.drawFittedText(button.getButtonText(), fullBounds.removeFromTop(fullBounds.getHeight() * .9), juce::Justification::centredBottom, 1);
+    }
     else
     {
         auto fontSize = juce::jmin(15.0f, (float)button.getHeight());
