@@ -14,8 +14,8 @@ DistorKAudioProcessorEditor::DistorKAudioProcessorEditor (DistorKAudioProcessor&
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
     setLookAndFeel(&lnf);
-
     addAndMakeVisible(toggleComp);
+    addAndMakeVisible(masterComp);
     addAndMakeVisible(satComp);
     addChildComponent(bitComp);
     addChildComponent(clipperComp);
@@ -78,7 +78,7 @@ void DistorKAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawRect(masterArea);
 
     //g.drawFittedText("Select Area", selectArea.toNearestInt(), juce::Justification::centred, 1);
-    g.drawFittedText("Master Area", masterArea.toNearestInt(), juce::Justification::centred, 1);
+    //g.drawFittedText("Master Area", masterArea.toNearestInt(), juce::Justification::centred, 1);
     //g.drawFittedText("DistorK", bounds.toNearestInt(), juce::Justification::centred, 1);
 
 }
@@ -91,6 +91,7 @@ void DistorKAudioProcessorEditor::resized()
     auto masterArea = bounds.removeFromRight(bounds.getWidth() * .3);
 
     toggleComp.setBounds(selectArea);
+    masterComp.setBounds(masterArea);
 
     satComp.setBounds(bounds);
     bitComp.setBounds(bounds);

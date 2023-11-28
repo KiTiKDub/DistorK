@@ -17,12 +17,14 @@ struct LevelMeterData
 	{
 		if (inOrOut) //true is in rms, false is out rms
 		{
-			rmsIn[channel] = juce::Decibels::gainToDecibels(buffer.getRMSLevel(channel, 0, buffer.getNumSamples()));
+			float rawFloat = juce::Decibels::gainToDecibels(buffer.getRMSLevel(channel, 0, buffer.getNumSamples()));
+			rmsIn[channel] = floor(rawFloat * 100) / 100;
 			if (rmsIn[channel] < -60) { rmsIn[channel] = -60; }
 		}
 		else
 		{
-			rmsOut[channel] = juce::Decibels::gainToDecibels(buffer.getRMSLevel(channel, 0, buffer.getNumSamples()));
+			float rawFloat = juce::Decibels::gainToDecibels(buffer.getRMSLevel(channel, 0, buffer.getNumSamples()));
+			rmsOut[channel] = floor(rawFloat * 100) / 100;
 			if (rmsOut[channel] < -60) { rmsOut[channel] = -60; }
 		}
 	};

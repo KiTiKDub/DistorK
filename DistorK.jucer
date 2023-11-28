@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="ktFbBl" name="DistorK" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1">
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" companyName="KiTiK Music">
   <MAINGROUP id="J6938O" name="DistorK">
     <GROUP id="{A5DCB423-D169-7943-36DB-439E32FEAF46}" name="Source">
       <GROUP id="{73268F9D-75C4-DBFD-0DF0-7357DA84ADA1}" name="GUI">
@@ -75,7 +75,7 @@
   <EXPORTFORMATS>
     <VS2022 targetFolder="Builds/VisualStudio2022">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="DistorK"/>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="DistorK" enablePluginBinaryCopyStep="1"/>
         <CONFIGURATION isDebug="0" name="Release" targetName="DistorK"/>
       </CONFIGURATIONS>
       <MODULEPATHS>

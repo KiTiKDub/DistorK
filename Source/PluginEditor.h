@@ -17,6 +17,7 @@
 #include "GUI/BitCrusher.h"
 #include "GUI/Clipper.h"
 #include "GUI/WaveShaper.h"
+#include "GUI/MasterControls.h"
 
 //==============================================================================
 /**
@@ -40,6 +41,7 @@ private:
     juce::Font newFont;
 
     ToggleComp toggleComp{ audioProcessor.apvts };
+    MasterComp masterComp{ audioProcessor };
     SaturationComp satComp{ audioProcessor.apvts };
     BitCrusherComp bitComp{ audioProcessor.apvts };
     ClipperComp clipperComp{ audioProcessor.apvts };
