@@ -10,13 +10,13 @@
 
 #include "Clipper.h"
 
-ClipperComp::ClipperComp(juce::AudioProcessorValueTreeState& apvts) :
-    thresholdAT(apvts, "clipperThresh", threshold)
+ClipperComp::ClipperComp(juce::AudioProcessorValueTreeState& apvts)
 {
     updateRSWL(apvts);
+    updateSWL(apvts);
 
     addAndMakeVisible(*select);
-    setVertSlider(threshold);
+    addAndMakeVisible(*threshold);
     addAndMakeVisible(*inGain);
     addAndMakeVisible(*mix);
     addAndMakeVisible(*outGain);
@@ -40,7 +40,7 @@ void ClipperComp::resized()
     auto sliderSpace = bigKnob.removeFromRight(bigKnob.getWidth() * .2);
     sliderSpace.reduce(0, sliderSpace.getHeight() * .1);
     sliderSpace.removeFromBottom(sliderSpace.getHeight() * .05);
-    threshold.setBounds(sliderSpace);
+    threshold->setBounds(sliderSpace);
     select->setBounds(bigKnob);
 
     auto leftSide = bounds.removeFromLeft(bounds.getWidth() * .33);
@@ -91,10 +91,15 @@ void ClipperComp::updateRSWL(juce::AudioProcessorValueTreeState& apvts)
         };
 }
 
-void ClipperComp::setVertSlider(juce::Slider& slider)
+void ClipperComp::updateSWL(juce::AudioProcessorValueTreeState& apvts)
 {
-    slider.setSliderStyle(juce::Slider::LinearVertical);
-    slider.setTextBoxStyle(juce::Slider::NoTextBox, false, 50, 50);
-    slider.setComponentID("Filter");
-    addAndMakeVisible(slider);
+    auto& thresholdParm = getSliderParam(apvts, "clipperThresh");
+    threshold = std::make_unique<SliderWithLabels>(&thresholdParm, "Threshold", juce::Slider::LinearVertical);
+    makeSliderAttachment(thresholdAT, apvts, "clipperThresh", *threshold);
+    addLabelPairs(threshold->labels, thresholdParm, " dB");
+
+    threshold.get()->onValueChange = [this, &thresholdParm]()
+        {
+            addLabelPairs(threshold->labels, thresholdParm, " dB");
+        };
 }

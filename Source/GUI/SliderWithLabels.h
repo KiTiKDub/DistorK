@@ -12,31 +12,31 @@
 #include <JuceHeader.h>
 
 struct SliderWithLabels : juce::Slider {
-   SliderWithLabels(juce::RangedAudioParameter* rap, const juce::String& unitSuffix, const juce::String title) :
+   SliderWithLabels(juce::RangedAudioParameter* rap, const juce::String title, const juce::Slider::SliderStyle style) :
         juce::Slider(),
-        param(rap),
-        suffix(unitSuffix)
+        param(rap)
     {
         setName(title);
+        setSliderStyle(style);
+        setTextBoxStyle(juce::Slider::NoTextBox, false, 50, 50);
     }
 
     struct LabelPos {
-        int pos;
+        int pos = 0;
         juce::String label;
-        int fontSize;
-
+        int fontSize = 0;
     };
 
     juce::Array<LabelPos> labels;
 
     void paint(juce::Graphics& g) override;
-    juce::Rectangle<int> getSliderBounds() const;
+    juce::Rectangle<int> getVerticalSliderBounds() const;
+    juce::Rectangle<int> getHorizontalSliderBounds() const;
 
     void changeParam(juce::RangedAudioParameter* p);
 
 protected:
     juce::RangedAudioParameter* param;
-    juce::String suffix;
 
 };
 

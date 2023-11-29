@@ -129,9 +129,9 @@ private:
     juce::AudioParameterFloat* satOutGain{ nullptr };
     juce::AudioParameterFloat* satMix{ nullptr };
 
-    //CURRENT BUGS
-    //Bypass on WS breaks the whole thing when audio is playing
-    //Defualt Values not working
+    //Todo
+    //Get waveShaper working
+        //Add in mix functionality
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DistorKAudioProcessor)

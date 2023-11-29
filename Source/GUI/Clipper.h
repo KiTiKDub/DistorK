@@ -11,6 +11,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include "rotarySliderWithLabels.h"
+#include "SliderWithLabels.h"
 
 struct ClipperComp : public juce::Component
 {
@@ -23,13 +24,13 @@ struct ClipperComp : public juce::Component
 private:
 
     void updateRSWL(juce::AudioProcessorValueTreeState& apvts);
-    void setVertSlider(juce::Slider& slider);
+    void updateSWL(juce::AudioProcessorValueTreeState& apvts);
 
     std::unique_ptr<RotarySliderWithLabels> select, inGain, mix, outGain;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> selectAT, inGainAT, mixAT, outGainAT;
 
-    juce::Slider threshold{ "Threshold" };
-    juce::AudioProcessorValueTreeState::SliderAttachment thresholdAT;
+    std::unique_ptr<SliderWithLabels> threshold;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> thresholdAT;
 
     std::vector<juce::String> typeText{ "Hard", "Soft", "Sine", "Hyperbolic Tan", "Arc Tan", "Quintic"};
 };

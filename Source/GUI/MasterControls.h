@@ -27,18 +27,13 @@ private:
 
     DistorKAudioProcessor& audioP;
 
-    void setHorzSlider(juce::Slider& slider);
-    void setVertSlider(juce::Slider& slider);
     void updateSWL(juce::AudioProcessorValueTreeState& apvts);
 
     std::array<LevelMeter, 2> meter;
     std::array<LevelMeter, 2> outMeter;
 
-    std::unique_ptr<SliderWithLabels> inGain, outGain;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> inGainAT, outGainAT;
-
-    juce::Slider mix;
-    juce::AudioProcessorValueTreeState::SliderAttachment mixAT;
+    std::unique_ptr<SliderWithLabels> inGain, mix, outGain;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> inGainAT, mixAT, outGainAT;
 
     juce::ToggleButton bypass{ "Bypass" };
     juce::AudioProcessorValueTreeState::ButtonAttachment bypassAT;
