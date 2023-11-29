@@ -23,6 +23,10 @@
               file="Source/GUI/rotarySliderWithLabels.h"/>
         <FILE id="iUrDki" name="Saturation.cpp" compile="1" resource="0" file="Source/GUI/Saturation.cpp"/>
         <FILE id="WjV2NP" name="Saturation.h" compile="0" resource="0" file="Source/GUI/Saturation.h"/>
+        <FILE id="VWloIT" name="SliderWithLabels.cpp" compile="1" resource="0"
+              file="Source/GUI/SliderWithLabels.cpp"/>
+        <FILE id="RpxMpJ" name="SliderWithLabels.h" compile="0" resource="0"
+              file="Source/GUI/SliderWithLabels.h"/>
         <FILE id="gRZJvj" name="Toggle.cpp" compile="1" resource="0" file="Source/GUI/Toggle.cpp"/>
         <FILE id="sviNrn" name="Toggle.h" compile="0" resource="0" file="Source/GUI/Toggle.h"/>
         <FILE id="JsJxem" name="WaveShaper.cpp" compile="1" resource="0" file="Source/GUI/WaveShaper.cpp"/>

@@ -119,10 +119,10 @@ void Laf::drawToggleButton(juce::Graphics& g, juce::ToggleButton& button,
         auto c2 = bounds.withSizeKeepingCentre(innerSize, innerSize).toFloat();
         c2.translate(0, -translate);
 
-        g.setColour(juce::Colours::red);
+        g.setColour(juce::Colour(186u, 34u, 34u));
         g.drawEllipse(c1, 2);
 
-        auto color = button.getToggleState() ? juce::Colours::red : juce::Colours::transparentBlack;
+        auto color = button.getToggleState() ? juce::Colour(186u, 34u, 34u) : juce::Colours::transparentBlack;
         g.setColour(color);
         g.fillEllipse(c2);
 
@@ -228,16 +228,17 @@ void Laf::drawLinearSlider(juce::Graphics& g, int x, int y, int width, int heigh
             auto thumb = slider.getThumbBeingDragged();
 
             auto font = g.getCurrentFont();
-            auto newWidth = font.getStringWidth(name);
+            //auto newWidth = font.getStringWidth(name);
+            auto newWidth = trackWidth * 1.5;
             auto whiteRect = Rectangle<float>(static_cast<float> (newWidth + 5), static_cast<float> (thumbWidth + 5)).withCentre(isThreeVal ? thumbPoint : maxPoint);
             auto thumbRect = whiteRect.reduced(1, 1);
-            g.setColour(Colours::white);
+            g.setColour(Colour(186u, 34u, 34u));
             g.fillRect(whiteRect);
             g.setColour(Colours::black);
             g.fillRect(thumbRect);
 
             g.setColour(juce::Colours::whitesmoke);
-            g.drawText(thumb ? name : value, thumbRect, Justification::centred, 1);
+            //g.drawText(thumb ? name : value, thumbRect, Justification::centred, 1);
         }
 
         if (isTwoVal || isThreeVal)

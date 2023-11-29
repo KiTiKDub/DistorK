@@ -12,20 +12,20 @@
 
 MasterComp::MasterComp(DistorKAudioProcessor& p) :
     audioP(p),
-    inGainAT(p.apvts, "masterInValue", inGain),
     mixAT(p.apvts, "masterMix", mix),
-    outGainAT(p.apvts, "masterOutValue", outGain),
     bypassAT(p.apvts, "globalBypass", bypass)
 
 {
+    updateSWL(p.apvts);
+
     addAndMakeVisible(meter[0]);
     addAndMakeVisible(meter[1]);
     addAndMakeVisible(outMeter[0]);
     addAndMakeVisible(outMeter[1]);
     
     setHorzSlider(mix);
-    setVertSlider(inGain);
-    setVertSlider(outGain);
+    setVertSlider(*inGain);
+    setVertSlider(*outGain);
     addAndMakeVisible(bypass);
 
     startTimerHz(24);
@@ -88,12 +88,12 @@ void MasterComp::resized()
     auto inGainArea = meterBounds.reduced(bounds.getWidth() * .38, 0);
     inGainArea.removeFromTop(meterBounds.getHeight() * .1);
     inGainArea.translate(-meterBounds.getWidth() * .125, 0);
-    inGain.setBounds(inGainArea);
+    inGain->setBounds(inGainArea);
 
     auto outGainArea = meterBounds.reduced(bounds.getWidth() * .38, 0);
     outGainArea.removeFromTop(meterBounds.getHeight() * .1);
     outGainArea.translate(meterBounds.getWidth() * .125, 0);
-    outGain.setBounds(outGainArea);
+    outGain->setBounds(outGainArea);
 
     auto bypassArea = meterBounds.reduced(bounds.getWidth() * .3, 0);
     bypassArea.removeFromBottom(bypassArea.getHeight() * .9);
@@ -134,4 +134,29 @@ void MasterComp::setVertSlider(juce::Slider& slider)
     slider.setTextBoxStyle(juce::Slider::NoTextBox, false, 50, 50);
     slider.setComponentID("Filter");
     addAndMakeVisible(slider);
+}
+
+void MasterComp::updateSWL(juce::AudioProcessorValueTreeState& apvts)
+{
+    auto& inGainParam = getSliderParam(apvts, "masterInValue");
+    auto& outGainParam = getSliderParam(apvts, "masterOutValue");
+
+    inGain = std::make_unique<SliderWithLabels>(&inGainParam, "", "In Gain");
+    outGain = std::make_unique<SliderWithLabels>(&outGainParam, "", "Out Gain");
+    
+    makeSliderAttachment(inGainAT, apvts, "masterInValue", *inGain);
+    makeSliderAttachment(outGainAT, apvts, "masterOutValue", *outGain);
+
+    addLabelPairs(inGain->labels, inGainParam, " dB");
+    addLabelPairs(outGain->labels, outGainParam, " dB");
+
+    inGain.get()->onValueChange = [this, &inGainParam]()
+        {
+            addLabelPairs(inGain->labels, inGainParam, " dB");
+        };
+
+    outGain.get()->onValueChange = [this, &outGainParam]()
+        {
+            addLabelPairs(outGain->labels, outGainParam, " dB");
+        };
 }

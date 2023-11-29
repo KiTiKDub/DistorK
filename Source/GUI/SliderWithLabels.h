@@ -1,8 +1,8 @@
 /*
   ==============================================================================
 
-    rotarySliderWithLabels.h
-    Created: 6 Nov 2023 5:57:57pm
+    SliderWithLabels.h
+    Created: 28 Nov 2023 3:55:24pm
     Author:  kylew
 
   ==============================================================================
@@ -11,9 +11,9 @@
 #pragma once
 #include <JuceHeader.h>
 
-struct RotarySliderWithLabels : juce::Slider {
-    RotarySliderWithLabels(juce::RangedAudioParameter* rap, const juce::String& unitSuffix, const juce::String title) :
-        juce::Slider(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag, juce::Slider::TextEntryBoxPosition::NoTextBox),
+struct SliderWithLabels : juce::Slider {
+   SliderWithLabels(juce::RangedAudioParameter* rap, const juce::String& unitSuffix, const juce::String title) :
+        juce::Slider(),
         param(rap),
         suffix(unitSuffix)
     {
@@ -46,7 +46,7 @@ template <
     typename ParamName,
     typename SliderType
 >
-void makeAttachment(std::unique_ptr<Attachment>& attachment,
+void makeSliderAttachment(std::unique_ptr<Attachment>& attachment,
     APVTS& apvts,
     const ParamName& name,
     SliderType& slider)
@@ -60,7 +60,7 @@ template <
     typename APVTS,
     typename Name
 >
-juce::RangedAudioParameter& getParam(APVTS& apvts, const Name& name)
+juce::RangedAudioParameter& getSliderParam(APVTS& apvts, const Name& name)
 {
     auto param = apvts.getParameter(name);
 
@@ -72,11 +72,11 @@ template <
     typename ParamType,
     typename SuffixType
 >
-void addLabelPairs(Labels& labels, const int posOne, const int posTwo, const ParamType& param, const SuffixType& suffix, const int fontSize = 14, std::vector<juce::String> array = std::vector<juce::String>())
+void addLabelPairs(Labels& labels, const ParamType& param, const SuffixType& suffix, const int fontSize = 14)
 {
     labels.clear();
-    labels.add({ posOne, getValString(param, true, suffix, array), fontSize });
-    labels.add({ posTwo, getValString(param, false, suffix, array), fontSize });
+    labels.add({ 1, getValString(param, true, suffix), fontSize });
+    labels.add({ 2, getValString(param, false, suffix), fontSize });
 }
 
-juce::String getValString(const juce::RangedAudioParameter& param, bool getLow, juce::String suffix, std::vector<juce::String>);
+juce::String getValString(const juce::RangedAudioParameter& param, bool getLow, juce::String suffix);
