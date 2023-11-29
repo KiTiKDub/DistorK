@@ -307,9 +307,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout DistorKAudioProcessor::creat
     layout.add(std::make_unique<AudioParameterFloat>("clipperMix", "Dry/Wet", mixRange, 0));
 
     //WaveShaper Controls
-    auto lessThanOne = NormalisableRange<float>(.01, .99, .01, 1);
-    auto moreThanOne = NormalisableRange<float>(.01, 10, .01, 1);
-    layout.add(std::make_unique<AudioParameterInt>("waveShaperSelect", "WaveShaper Type", 0, 3, 0));
+    auto lessThanOne = NormalisableRange<float>(.02, .99, .01, 1);
+    auto moreThanOne = NormalisableRange<float>(1, 10, .01, 1);
+    layout.add(std::make_unique<AudioParameterInt>("waveShaperSelect", "Type", 0, 3, 0));
     layout.add(std::make_unique<AudioParameterFloat>("waveShaperSin", "Drive", lessThanOne, 0));
     layout.add(std::make_unique<AudioParameterFloat>("waveShaperQuadratic", "Drive", moreThanOne, 0));
     layout.add(std::make_unique<AudioParameterFloat>("waveShaperFactor", "Drive", lessThanOne, 0));

@@ -40,22 +40,26 @@ void MasterComp::paint(juce::Graphics& g)
     auto bounds = getLocalBounds();
     auto meterBounds = bounds.reduced(0, bounds.getHeight() * .1);
     meterBounds.translate(0, -bounds.getHeight() * .025);
-    auto topBounds = bounds.removeFromTop(bounds.getHeight() * .075);
+    auto topBounds = bounds.removeFromTop(bounds.getHeight() * .07);
     auto bottomBounds = bounds.removeFromBottom(bounds.getHeight() * .11);
-    g.setColour(juce::Colours::white);
-    /*g.drawRect(topBounds);
-    g.drawRect(meterBounds);*/
+    g.setColour(juce::Colour(64u, 194u, 230u));
 
+    juce::Line<int> line;
+
+    line.setStart(meterBounds.getBottomLeft());
+    line.setEnd(meterBounds.getBottomRight());
+    g.drawLine(line.toFloat(), 1.f);
+
+    line.setStart(topBounds.getBottomLeft());
+    line.setEnd(topBounds.getBottomRight());
+    g.drawLine(line.toFloat(), 1.f);
+
+    g.setColour(juce::Colours::white);
     auto leftRMS = topBounds.reduced(topBounds.getWidth() * .4, 0);
     leftRMS.translate(-topBounds.getWidth() * .3, 0);
     
     auto leftMeters = meterBounds.reduced(bounds.getWidth() * .4, 0);
     leftMeters.translate(-meterBounds.getWidth() * .3, 0);
-
-    g.setColour(juce::Colours::white);
-    auto topLeft = topBounds.removeFromLeft(topBounds.getWidth() * .5);
-    g.drawFittedText("DistorK", topLeft, juce::Justification::centred, 1);
-    g.drawFittedText("gumroad.com/kwhaley5", topBounds, juce::Justification::centred, 1);
 
     auto input = audioP.levelMeterData.getRMS(0);
     auto output = audioP.levelMeterData.getOutRMS(0);
@@ -69,7 +73,10 @@ void MasterComp::paint(juce::Graphics& g)
     g.drawFittedText((juce::String)input, leftMetersbounds, juce::Justification::centredTop, 1);
     g.drawFittedText((juce::String)output, rightMetersBounds, juce::Justification::centredTop, 1);
     
-
+    auto newFont = juce::Font(juce::Typeface::createSystemTypefaceFor(BinaryData::OFFSHORE_TTF, BinaryData::OFFSHORE_TTFSize));
+    g.setFont(newFont);
+    g.setFont(topBounds.getHeight() * .95);
+    g.drawFittedText("DistorK", topBounds, juce::Justification::centred, 1);
 }
 
 void MasterComp::resized()
@@ -77,7 +84,7 @@ void MasterComp::resized()
     auto bounds = getLocalBounds();
     auto meterBounds = bounds.reduced(0, bounds.getHeight() * .1);
     meterBounds.translate(0, -bounds.getHeight() * .025);
-    auto topBounds = bounds.removeFromTop(bounds.getHeight() * .1);
+    auto topBounds = bounds.removeFromTop(bounds.getHeight() * .07);
     auto bottomBounds = bounds.removeFromBottom(bounds.getHeight() * .15);
     bottomBounds.reduce(bottomBounds.getWidth() * .05, 0);
 

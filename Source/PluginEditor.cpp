@@ -20,6 +20,7 @@ DistorKAudioProcessorEditor::DistorKAudioProcessorEditor (DistorKAudioProcessor&
     addChildComponent(bitComp);
     addChildComponent(clipperComp);
     addChildComponent(wsComp);
+    addAndMakeVisible(gumroad);
 
     toggleComp.selectSat.onClick = [this]()
         {
@@ -64,23 +65,36 @@ DistorKAudioProcessorEditor::~DistorKAudioProcessorEditor()
 //==============================================================================
 void DistorKAudioProcessorEditor::paint (juce::Graphics& g)
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (juce::Colours::black);
 
     auto bounds = getLocalBounds();
-
     g.setColour(juce::Colours::white);
+    
+    auto logoSpace = bounds.reduced(bounds.getWidth() * .425, bounds.getHeight() * .425);
+    logoSpace.setX(bounds.getTopLeft().getX());
+    logoSpace.setY(bounds.getTopLeft().getY());
+    logoSpace.translate(-25, -10);
+
+    auto logo = juce::ImageCache::getFromMemory(BinaryData::KITIK_LOGO_NO_BKGD_png, BinaryData::KITIK_LOGO_NO_BKGD_pngSize);
+    g.setOpacity(.8);
+    g.drawImage(logo, logoSpace.toFloat(), juce::RectanglePlacement::centred);
+    g.setOpacity(1);
+
     g.setFont(15.0f);
 
     auto selectArea = bounds.removeFromBottom(bounds.getHeight() * .15);
     auto masterArea = bounds.removeFromRight(bounds.getWidth() * .3);
-    g.drawRect(selectArea);
-    g.drawRect(masterArea);
 
-    //g.drawFittedText("Select Area", selectArea.toNearestInt(), juce::Justification::centred, 1);
-    //g.drawFittedText("Master Area", masterArea.toNearestInt(), juce::Justification::centred, 1);
-    //g.drawFittedText("DistorK", bounds.toNearestInt(), juce::Justification::centred, 1);
+    g.setColour(juce::Colour(186u, 34u, 34u));
+    juce::Line<int> line;
 
+    line.setStart(selectArea.getTopLeft());
+    line.setEnd(selectArea.getTopRight());
+    g.drawLine(line.toFloat(), 1.f);
+
+    line.setStart(masterArea.getTopLeft());
+    line.setEnd(masterArea.getBottomLeft());
+    g.drawLine(line.toFloat(), 1.f);
 }
 
 void DistorKAudioProcessorEditor::resized()
@@ -97,6 +111,15 @@ void DistorKAudioProcessorEditor::resized()
     bitComp.setBounds(bounds);
     clipperComp.setBounds(bounds);
     wsComp.setBounds(bounds);
+
+    auto linkSpace = bounds.reduced(bounds.getWidth() * .4, bounds.getHeight() * .45);
+    linkSpace.setX(bounds.getTopRight().getX() - linkSpace.getWidth());
+    linkSpace.setY(bounds.getTopRight().getY());
+
+    auto font = juce::Font::Font();
+    gumroad.setFont(font, false);
+    gumroad.setColour(0x1001f00, juce::Colours::white);
+    gumroad.setBounds(linkSpace);
 }
 
 

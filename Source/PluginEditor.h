@@ -37,8 +37,10 @@ private:
     DistorKAudioProcessor& audioProcessor;
 
     Laf lnf;
-    juce::Image logo;
-    juce::Font newFont;
+
+    juce::URL url{ "https://kwhaley5.gumroad.com/" };
+
+    juce::HyperlinkButton gumroad{ "More Plugins", url };
 
     ToggleComp toggleComp{ audioProcessor.apvts };
     MasterComp masterComp{ audioProcessor };

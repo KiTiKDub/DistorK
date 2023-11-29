@@ -3,6 +3,11 @@
 <JUCERPROJECT id="ktFbBl" name="DistorK" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" companyName="KiTiK Music">
   <MAINGROUP id="J6938O" name="DistorK">
+    <GROUP id="{E3C426A6-98CD-0538-481F-A524DB1C4AE7}" name="Assets">
+      <FILE id="RnVCFc" name="OFFSHORE.TTF" compile="0" resource="1" file="../../../APPDATA/LOCAL/MICROSOFT/WINDOWS/FONTS/OFFSHORE.TTF"/>
+      <FILE id="WkMC3x" name="KITIK_LOGO_NO_BKGD.png" compile="0" resource="1"
+            file="../../Muisc/Pictures/KITIK_LOGO_NO_BKGD.png"/>
+    </GROUP>
     <GROUP id="{A5DCB423-D169-7943-36DB-439E32FEAF46}" name="Source">
       <GROUP id="{73268F9D-75C4-DBFD-0DF0-7357DA84ADA1}" name="GUI">
         <FILE id="ysqgDx" name="BitCrusher.cpp" compile="1" resource="0" file="Source/GUI/BitCrusher.cpp"/>

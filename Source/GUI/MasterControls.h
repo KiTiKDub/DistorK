@@ -27,6 +27,9 @@ private:
 
     DistorKAudioProcessor& audioP;
 
+    juce::Image logo;
+    juce::Font newFont;
+
     void updateSWL(juce::AudioProcessorValueTreeState& apvts);
 
     std::array<LevelMeter, 2> meter;

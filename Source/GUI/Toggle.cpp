@@ -68,6 +68,7 @@ void ToggleComp::paint(juce::Graphics& g)
 void ToggleComp::resized()
 {
     auto bounds = getLocalBounds();
+    bounds.translate(0, 3);
 
     auto t1Area = bounds.removeFromLeft(bounds.getWidth() * .2);
     auto t1toggle = t1Area.reduced(t1Area.getWidth() * .3, t1Area.getHeight() * .3);
