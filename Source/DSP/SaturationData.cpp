@@ -36,7 +36,8 @@ void Saturation::process(juce::dsp::AudioBlock<float>& block, int channel)
     for (int s = 0; s < context.getInputBlock().getNumSamples(); s++)
     {
         auto power = pow(channelInput[s], 2) / abs(channelInput[s]) * satDrive;
-        channelOutput[s] = (channelInput[s] / abs(channelInput[s])) * (1 - std::exp(-power));
+        auto distort = (channelInput[s] / abs(channelInput[s])) * (1 - std::exp(-power));
+        channelOutput[s] = distort * satMix + ((1-satMix) * channelInput[s]);
     }
 
     outGain.setGainDecibels(satOutGain);

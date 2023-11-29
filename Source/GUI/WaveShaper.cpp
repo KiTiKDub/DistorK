@@ -85,10 +85,6 @@ void WaveShaperComp::updateRSWL(juce::AudioProcessorValueTreeState& apvts)
             addLabelPairs(select->labels, 1, 3, selectParam, "", 20, typeText);
             updateAttachments(apvts);
         };
-    distort.get()->onValueChange = [this, &distortParm]()
-        {
-            addLabelPairs(distort->labels, 1, 3, distortParm, "", 20);
-        };
     mix.get()->onValueChange = [this, &mixParam]()
         {
             addLabelPairs(mix->labels, 1, 3, mixParam, "%");
@@ -102,19 +98,18 @@ void WaveShaperComp::updateRSWL(juce::AudioProcessorValueTreeState& apvts)
 void WaveShaperComp::updateAttachments(juce::AudioProcessorValueTreeState& apvts)
 {
     distortAT.reset();
-
     juce::String newID;
     auto param = select.get()->getValue();
 
-    if (param == 1)
+    if (param == 0)
     {
         newID = "waveShaperSin";
     }
-    else if (param == 2)
+    else if (param == 1)
     {
         newID = "waveShaperQuadratic";
     }
-    else if (param == 3)
+    else if (param == 2)
     {
         newID = "waveShaperFactor";
     }

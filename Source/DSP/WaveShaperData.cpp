@@ -82,11 +82,11 @@ void WaveShaper::processSinusoidal(int channel, juce::dsp::ProcessContextReplaci
     {
         if (channelInput[s] > b)
         {
-            channelOutput[s] = 1;
+            channelOutput[s] = (1 * waveshaperMix) + (channelInput[s] * (1-waveshaperMix));
         }
         else
         {
-            channelOutput[s] = sin(z * channelInput[s]) * a;
+            channelOutput[s] = ((sin(z * channelInput[s]) * a) * waveshaperMix) + (channelInput[s] * (1 - waveshaperMix));
         }
 
     }
@@ -101,8 +101,8 @@ void WaveShaper::processQuadratic(int channel, juce::dsp::ProcessContextReplacin
 
     for (int s = 0; s < context.getInputBlock().getNumSamples(); ++s)
     {
-        channelOutput[s] = channelInput[s] * (abs(channelInput[s]) + factor) / (pow(channelInput[s], 2) + (factor - 1) * abs(channelInput[s]) + 1);
-
+        auto shape = channelInput[s] * (abs(channelInput[s]) + factor) / (pow(channelInput[s], 2) + (factor - 1) * abs(channelInput[s]) + 1);
+        channelOutput[s] = (shape * waveshaperMix) + (channelInput[s] * (1-waveshaperMix));
     }
 }
 
@@ -116,7 +116,8 @@ void WaveShaper::processFactor(int channel, juce::dsp::ProcessContextReplacing<f
 
     for (int s = 0; s < context.getInputBlock().getNumSamples(); ++s)
     {
-        channelOutput[s] = ((1 + factor) * channelInput[s]) / (1 + factor * abs(channelInput[s]));
+        auto shape = ((1 + factor) * channelInput[s]) / (1 + factor * abs(channelInput[s]));
+        channelOutput[s] = (shape * waveshaperMix) + (channelInput[s] * (1 - waveshaperMix));
     }
 }
 
@@ -132,6 +133,7 @@ void WaveShaper::processGB(int channel, juce::dsp::ProcessContextReplacing<float
         auto distort = channelInput[s] * factor;
         auto constant = 1 + exp(sqrt(fabs(distort)) * -0.75);
 
-        channelOutput[s] = (exp(distort) - exp(-distort * constant)) / (exp(distort) + exp(-distort));
+        auto shape = (exp(distort) - exp(-distort * constant)) / (exp(distort) + exp(-distort));
+        channelOutput[s] = (shape * waveshaperMix) + (channelInput[s] * (1 - waveshaperMix));
     }
 }
