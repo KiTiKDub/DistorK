@@ -219,8 +219,19 @@ void DistorKAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
 
     //over sample blocks
     auto ovRate = overSampleSelect->get();
-    auto ovBlock = overSamplers[ovRate].processSamplesUp(inputBlock);
-    auto ovContext = juce::dsp::ProcessContextReplacing<float>(ovBlock);
+    if (ovRate != lastOSValue)
+    {
+        lastOSValue = ovRate;
+        suspendProcessing(true);
+
+        prepareToPlay(getSampleRate(), buffer.getNumSamples());
+        auto latency = overSamplers[ovRate].getLatencyInSamples();
+
+        setLatencySamples(latency);
+
+        suspendProcessing(false);
+    }
+    auto ovBlock = overSamplers[ovRate].processSamplesUp(inputContext.getInputBlock());
 
     //update params
     clipper.updateParams(bypassClip->get(), clipperSelect->get(), clipperThresh->get(), clipperInGain->get(), clipperOutGain->get(), clipperMix->get());
@@ -249,7 +260,7 @@ void DistorKAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
         auto data = inputBlock.getChannelPointer(ch);
         auto dry = copyBlock.getChannelPointer(ch);
 
-        for (int s = 0; s < ovBlock.getNumSamples(); s++)
+        for (int s = 0; s < inputBlock.getNumSamples(); s++)
         {
             data[s] = (data[s] * masterMix->get() / 100) + (dry[s] * (1 - masterMix->get() / 100));
         }
@@ -301,15 +312,15 @@ juce::AudioProcessorValueTreeState::ParameterLayout DistorKAudioProcessor::creat
     layout.add(std::make_unique<AudioParameterBool>("selectClip", "Clipper", false));
     layout.add(std::make_unique<AudioParameterBool>("bypassClip", "Bypass Clip", false));
     layout.add(std::make_unique<AudioParameterBool>("selectBit", "BitCrusher", false));
-    layout.add(std::make_unique<AudioParameterBool>("bypassBit", "Bypass Bit", true));
+    layout.add(std::make_unique<AudioParameterBool>("bypassBit", "Bypass Bit", false));
     layout.add(std::make_unique<AudioParameterBool>("selectWaveShpr", "WaveShaper", false));
-    layout.add(std::make_unique<AudioParameterBool>("bypassWaveShpr", "Bypass WS", true));
+    layout.add(std::make_unique<AudioParameterBool>("bypassWaveShpr", "Bypass WS", false));
     layout.add(std::make_unique<AudioParameterBool>("selectSat", "Saturation", true));
     layout.add(std::make_unique<AudioParameterBool>("bypassSat", "Bypass Sat", false));
     layout.add(std::make_unique<AudioParameterFloat>("masterInValue", "Input", gainRange, 0));
     layout.add(std::make_unique<AudioParameterFloat>("masterOutValue", "Output", gainRange, 0));
     layout.add(std::make_unique<AudioParameterFloat>("masterMix", "Dry/Wet", mixRange, 100));
-    layout.add(std::make_unique<AudioParameterInt>("overSampleSelect", "Oversample Rate", 0, 3, 0));
+    layout.add(std::make_unique<AudioParameterInt>("overSampleSelect", "Oversample Rate", 0, 3, 1));
 
     //Clipper Controls
     auto threshRange = NormalisableRange<float>(-60, 0, .1, 1);
@@ -317,7 +328,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout DistorKAudioProcessor::creat
     layout.add(std::make_unique<AudioParameterFloat>("clipperThresh", "Threshold", threshRange, 0));
     layout.add(std::make_unique<AudioParameterFloat>("clipperInGain", "In Gain", gainRange, 0));
     layout.add(std::make_unique<AudioParameterFloat>("clipperOutGain", "Out Gain", gainRange, 0));
-    layout.add(std::make_unique<AudioParameterFloat>("clipperMix", "Dry/Wet", mixRange, 100));
+    layout.add(std::make_unique<AudioParameterFloat>("clipperMix", "Dry/Wet", mixRange, 0));
 
     //WaveShaper Controls
     auto lessThanOne = NormalisableRange<float>(.01, .99, .01, 1);
@@ -344,7 +355,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout DistorKAudioProcessor::creat
     layout.add(std::make_unique<AudioParameterFloat>("satDrive", "Drive", driveRange, 1));
     layout.add(std::make_unique<AudioParameterFloat>("satInGain", "In Gain", gainRange, 0));
     layout.add(std::make_unique<AudioParameterFloat>("satOutGain", "Out Gain", gainRange, 0));
-    layout.add(std::make_unique<AudioParameterFloat>("satMix", "Dry/Wet", mixRange, 100));
+    layout.add(std::make_unique<AudioParameterFloat>("satMix", "Dry/Wet", mixRange, 0));
 
     return layout;
 }

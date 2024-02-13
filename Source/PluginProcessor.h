@@ -74,11 +74,13 @@ private:
 
     std::array<juce::dsp::Oversampling<float>, 4> overSamplers
     { {
-        {2, 0, juce::dsp::Oversampling<float>::filterHalfBandPolyphaseIIR},
-        {2, 1, juce::dsp::Oversampling<float>::filterHalfBandPolyphaseIIR},
-        {2, 2, juce::dsp::Oversampling<float>::filterHalfBandPolyphaseIIR},
-        {2, 3, juce::dsp::Oversampling<float>::filterHalfBandPolyphaseIIR},
+        {2, 0, juce::dsp::Oversampling<float>::filterHalfBandPolyphaseIIR, true, true},
+        {2, 1, juce::dsp::Oversampling<float>::filterHalfBandPolyphaseIIR, true, true},
+        {2, 2, juce::dsp::Oversampling<float>::filterHalfBandPolyphaseIIR, true, true},
+        {2, 3, juce::dsp::Oversampling<float>::filterHalfBandPolyphaseIIR, true, true}
     } };
+
+    int lastOSValue{ 0 };
 
     //Master DSP & Params
     juce::dsp::Gain<float> masterIn;
