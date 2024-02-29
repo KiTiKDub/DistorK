@@ -30,8 +30,11 @@ void Saturation::process(juce::dsp::AudioBlock<float>& block, int channel)
     auto channelInput = context.getInputBlock().getChannelPointer(channel);
     auto channelOutput = context.getOutputBlock().getChannelPointer(channel);
 
-    inGain.setGainDecibels(satInGain);
-    inGain.process(context);
+    if(channel == 0)
+    {
+        inGain.setGainDecibels(satInGain);
+        inGain.process(context);
+    }
 
     for (int s = 0; s < context.getInputBlock().getNumSamples(); s++)
     {
@@ -44,8 +47,11 @@ void Saturation::process(juce::dsp::AudioBlock<float>& block, int channel)
         
     }
 
-    outGain.setGainDecibels(satOutGain);
-    outGain.process(context);
+    if (channel == 0)
+    {
+        outGain.setGainDecibels(satOutGain);
+        outGain.process(context);
+    }
 }
 
 void Saturation::updateParams(bool bypass, float drive, float inGain, float outGain, float mix)

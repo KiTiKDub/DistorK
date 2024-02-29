@@ -222,7 +222,7 @@ void DistorKAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
 
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
-        distorkEngine.process(ovBlock, order, channel);
+        distorkEngine.process(ovBlock, distortionProcessOrder, channel);
     }
 
     overSamplers[ovRate].processSamplesDown(inputContext.getOutputBlock());

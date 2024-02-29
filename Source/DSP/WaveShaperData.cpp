@@ -27,34 +27,36 @@ void WaveShaper::process(juce::dsp::AudioBlock<float>& block, int channel)
 
     auto context = juce::dsp::ProcessContextReplacing<float>(block);
 
-    inGain.setGainDecibels(waveShaperInGainValue);
-    inGain.process(context);
-
-    for (int channel = 0; channel < block.getNumChannels(); ++channel)
+    if (channel == 0)
     {
-        switch (waveShaperTypeSelect)
-        {
-        case WaveShaper::sinusoidal:
-            processSinusoidal(channel, context);
-            break;
-
-        case WaveShaper::quadratic:
-            processQuadratic(channel, context);
-            break;
-
-        case WaveShaper::factor:
-            processFactor(channel, context);
-            break;
-
-        case WaveShaper::GloubiBoulga:
-            processGB(channel, context);
-            break;
-        }
-
+        inGain.setGainDecibels(waveShaperInGainValue);
+        inGain.process(context);
     }
 
-    outGain.setGainDecibels(waveShaperOutGainValue);
-    outGain.process(context);
+    switch (waveShaperTypeSelect)
+    {
+    case WaveShaper::sinusoidal:
+        processSinusoidal(channel, context);
+        break;
+
+    case WaveShaper::quadratic:
+        processQuadratic(channel, context);
+        break;
+
+    case WaveShaper::factor:
+        processFactor(channel, context);
+        break;
+
+    case WaveShaper::GloubiBoulga:
+        processGB(channel, context);
+        break;
+    }
+
+    if(channel == 0)
+    {
+        outGain.setGainDecibels(waveShaperOutGainValue);
+        outGain.process(context);
+    }
 }
 
 void WaveShaper::updateParams(bool bypass, int typeSelect, std::vector<juce::AudioParameterFloat*>& factors, float inGain, float outGain, float mix)

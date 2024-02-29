@@ -27,14 +27,16 @@ void Clipper::process(juce::dsp::AudioBlock<float>& block, int channel)
 
     auto context = juce::dsp::ProcessContextReplacing<float>(block);
 
-    inGain.setGainDecibels(clipperGainIn);
-    inGain.process(context);
+    if (channel == 0)
+    {
+        inGain.setGainDecibels(clipperGainIn);
+        inGain.process(context);
+    }
 
     auto* channelInput = context.getInputBlock().getChannelPointer(channel);
     auto* channelOutput = context.getOutputBlock().getChannelPointer(channel);
 
     auto len = context.getInputBlock().getNumSamples();
-
 
     switch (clipperMode)
     {
@@ -121,9 +123,11 @@ void Clipper::process(juce::dsp::AudioBlock<float>& block, int channel)
         break;
     }
 
-
-    outGain.setGainDecibels(clipperGainOut);
-    outGain.process(context);
+    if (channel == 0)
+    {
+        outGain.setGainDecibels(clipperGainOut);
+        outGain.process(context);
+    }
 
 }
 

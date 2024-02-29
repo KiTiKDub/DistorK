@@ -64,7 +64,7 @@ public:
     static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
     juce::AudioProcessorValueTreeState apvts{ *this, nullptr, "parameters", createParameterLayout() };
 
-    void setToolbarOrder(std::vector<int> tbOrder) { order = tbOrder; }
+    void setToolbarOrder(std::vector<int> tbOrder) { distortionProcessOrder = tbOrder; }
 
     LevelMeterData levelMeterData;
 
@@ -105,7 +105,7 @@ private:
     juce::AudioParameterFloat* masterMix{ nullptr };
     juce::AudioParameterInt* overSampleSelect{ nullptr };
 
-    std::vector<int> order{ 1, 2, 3, 4 };
+    std::vector<int> distortionProcessOrder{ 1, 2, 3, 4 };
 
     //Todo
     //Get waveShaper working

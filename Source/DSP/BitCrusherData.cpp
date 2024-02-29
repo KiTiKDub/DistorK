@@ -30,8 +30,11 @@ void BitCrusher::process(juce::dsp::AudioBlock<float>& block, int channel)
     auto channelInput = context.getInputBlock().getChannelPointer(channel);
     auto channelOutput = context.getOutputBlock().getChannelPointer(channel);
 
-    inGain.setGainDecibels(crusherInGain);
-    inGain.process(context);
+    if (channel == 0)
+    {
+        inGain.setGainDecibels(crusherInGain);
+        inGain.process(context);
+    }
 
     for (int s = 0; s < context.getInputBlock().getNumSamples(); ++s)
     {
@@ -51,8 +54,11 @@ void BitCrusher::process(juce::dsp::AudioBlock<float>& block, int channel)
         }
     }
 
-    outGain.setGainDecibels(crusherOutGain);
-    outGain.process(context);
+    if (channel == 0)
+    {
+        outGain.setGainDecibels(crusherOutGain);
+        outGain.process(context);
+    }
 }
 
 void BitCrusher::updateParams(bool bypass, int bitDepth, int bitRate, float inGain, float outGain, float mix)
