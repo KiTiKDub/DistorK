@@ -26,8 +26,6 @@ MasterComp::MasterComp(DistorKAudioProcessor& p) :
     addAndMakeVisible(*inGain);
     addAndMakeVisible(*outGain);
     addAndMakeVisible(bypass);
-
-    startTimerHz(24);
 }
 
 MasterComp::~MasterComp()
@@ -117,7 +115,7 @@ void MasterComp::resized()
     mix->setBounds(bottomBounds);
 }
 
-void MasterComp::timerCallback()
+void MasterComp::update()
 {
     for (auto channel = 0; channel < audioP.getTotalNumInputChannels(); channel++) {
         meter[channel].setLevel(audioP.levelMeterData.getRMS(channel));

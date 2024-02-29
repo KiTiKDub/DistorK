@@ -130,8 +130,3 @@ void WaveShaperComp::updateAttachments(juce::AudioProcessorValueTreeState& apvts
         };
     
 }
-
-void WaveShaperComp::updateSelectLabels()
-{
-
-}

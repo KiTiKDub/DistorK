@@ -14,14 +14,14 @@
 #include "kLevelMeter.h"
 #include "SliderWithLabels.h"
 
-struct MasterComp : public juce::Component, juce::Timer
+struct MasterComp : public juce::Component
 {
     MasterComp(DistorKAudioProcessor&);
     ~MasterComp();
 
     void paint(juce::Graphics& g) override;
     void resized() override;
-    void timerCallback() override;
+    void update();
 
 private:
 

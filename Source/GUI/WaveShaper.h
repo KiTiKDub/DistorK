@@ -24,7 +24,6 @@ private:
 
     void updateRSWL(juce::AudioProcessorValueTreeState& apvts);
     void updateAttachments(juce::AudioProcessorValueTreeState& apvts);
-    void updateSelectLabels();
 
     std::unique_ptr<RotarySliderWithLabels> select, distort, inGain, mix, outGain;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> selectAT, distortAT, inGainAT, mixAT, outGainAT;

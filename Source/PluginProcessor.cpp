@@ -25,47 +25,48 @@ DistorKAudioProcessor::DistorKAudioProcessor()
     //Master Controls
     globalBypass = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("globalBypass"));
     selectClip = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("selectClip"));
-    bypassClip = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("bypassClip"));
     selectBit = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("selectBit"));
-    bypassBit = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("bypassBit"));
     selectWaveShpr = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("selectWaveShpr"));
-    bypassWaveShpr = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("bypassWaveShpr"));
     selectSat = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("selectSat"));
-    bypassSat = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("bypassSat"));
     masterInValue = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("masterInValue"));
     masterOutValue = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("masterOutValue"));
     masterMix = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("masterMix"));
     overSampleSelect = dynamic_cast<juce::AudioParameterInt*>(apvts.getParameter("overSampleSelect"));
+    distorkEngine.engineToggle = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("toggleEngine"));
 
     //Clipper Controls
-    clipperSelect = dynamic_cast<juce::AudioParameterInt*>(apvts.getParameter("clipperSelect"));
-    clipperThresh = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("clipperThresh"));
-    clipperInGain = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("clipperInGain"));
-    clipperOutGain = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("clipperOutGain"));
-    clipperMix = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("clipperMix"));
+    distorkEngine.clipperToggle = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("toggleClip"));
+    distorkEngine.clipperSelect = dynamic_cast<juce::AudioParameterInt*>(apvts.getParameter("clipperSelect"));
+    distorkEngine.clipperThresh = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("clipperThresh"));
+    distorkEngine.clipperInGain = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("clipperInGain"));
+    distorkEngine.clipperOutGain = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("clipperOutGain"));
+    distorkEngine.clipperMix = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("clipperMix"));
 
     //WaveShaper Controls
-    waveShaperSelect = dynamic_cast<juce::AudioParameterInt*>(apvts.getParameter("waveShaperSelect"));
-    waveShaperFactorsHolder[0] = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperSin"));
-    waveShaperFactorsHolder[1] = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperQuadratic"));
-    waveShaperFactorsHolder[2] = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperFactor"));
-    waveShaperFactorsHolder[3] = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperGB"));
-    waveShaperInGain = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperInGain"));
-    waveShaperOutGain = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperOutGain"));
-    waveShaperMix = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperMix"));
+    distorkEngine.waveShaperToggle = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("toggleWaveShpr"));
+    distorkEngine.waveShaperSelect = dynamic_cast<juce::AudioParameterInt*>(apvts.getParameter("waveShaperSelect"));
+    distorkEngine.waveShaperFactorsHolder[0] = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperSin"));
+    distorkEngine.waveShaperFactorsHolder[1] = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperQuadratic"));
+    distorkEngine.waveShaperFactorsHolder[2] = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperFactor"));
+    distorkEngine.waveShaperFactorsHolder[3] = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperGB"));
+    distorkEngine.waveShaperInGain = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperInGain"));
+    distorkEngine.waveShaperOutGain = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperOutGain"));
+    distorkEngine.waveShaperMix = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("waveShaperMix"));
 
     //BitCrusher Controls
-    crusherBitDepth = dynamic_cast<juce::AudioParameterInt*>(apvts.getParameter("crusherBitDepth"));
-    crusherBitRate = dynamic_cast<juce::AudioParameterInt*>(apvts.getParameter("crusherBitRate"));
-    crusherInGain = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("crusherInGain"));
-    crusherOutGain = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("crusherOutGain"));
-    crusherMix = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("crusherMix"));
+    distorkEngine.crusherToggle = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("toggleBit"));
+    distorkEngine.crusherBitDepth = dynamic_cast<juce::AudioParameterInt*>(apvts.getParameter("crusherBitDepth"));
+    distorkEngine.crusherBitRate = dynamic_cast<juce::AudioParameterInt*>(apvts.getParameter("crusherBitRate"));
+    distorkEngine.crusherInGain = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("crusherInGain"));
+    distorkEngine.crusherOutGain = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("crusherOutGain"));
+    distorkEngine.crusherMix = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("crusherMix"));
 
     //Saturator Controls
-    satDrive = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("satDrive"));
-    satInGain = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("satInGain"));
-    satOutGain = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("satOutGain"));
-    satMix = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("satMix"));
+    distorkEngine.satToggle = dynamic_cast<juce::AudioParameterBool*>(apvts.getParameter("toggleSat"));
+    distorkEngine.satDrive = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("satDrive"));
+    distorkEngine.satInGain = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("satInGain"));
+    distorkEngine.satOutGain = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("satOutGain"));
+    distorkEngine.satMix = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("satMix"));
 }
 
 DistorKAudioProcessor::~DistorKAudioProcessor()
@@ -150,10 +151,7 @@ void DistorKAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     masterOut.prepare(spec);
     masterOut.setRampDurationSeconds(.05);
 
-    clipper.prepareToPlay(spec);
-    waveshaper.prepareToPlay(spec);
-    bitcrusher.prepareToPlay(spec);
-    saturation.prepareToPlay(spec);
+    distorkEngine.prepareToPlay(spec);
 
     for (auto& oversample : overSamplers)
     {
@@ -219,37 +217,15 @@ void DistorKAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
 
     //over sample blocks
     auto ovRate = overSampleSelect->get();
-    if (ovRate != lastOSValue)
-    {
-        lastOSValue = ovRate;
-        suspendProcessing(true);
 
-        prepareToPlay(getSampleRate(), buffer.getNumSamples());
-        auto latency = overSamplers[ovRate].getLatencyInSamples();
-
-        setLatencySamples(latency);
-
-        suspendProcessing(false);
-    }
     auto ovBlock = overSamplers[ovRate].processSamplesUp(inputContext.getInputBlock());
 
-    //update params
-    clipper.updateParams(bypassClip->get(), clipperSelect->get(), clipperThresh->get(), clipperInGain->get(), clipperOutGain->get(), clipperMix->get());
-    waveshaper.updateParams(bypassWaveShpr->get(), waveShaperSelect->get(), waveShaperFactorsHolder, waveShaperInGain->get(), waveShaperOutGain->get(), waveShaperMix->get());
-    bitcrusher.updateParams(bypassBit->get(), crusherBitDepth->get(), crusherBitRate->get(), crusherInGain->get(), crusherOutGain->get(), crusherMix->get());
-    saturation.updateParams(bypassSat->get(), satDrive->get(), satInGain->get(), satOutGain->get(), satMix->get());
-
-    //process distortions
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
-        saturation.process(ovBlock, channel);
-        clipper.process(ovBlock, channel);
-        waveshaper.process(ovBlock, channel);
-        bitcrusher.process(ovBlock, channel);
+        distorkEngine.process(ovBlock, order, channel);
     }
 
-    auto& outputBlock = inputContext.getOutputBlock();
-    overSamplers[ovRate].processSamplesDown(outputBlock);
+    overSamplers[ovRate].processSamplesDown(inputContext.getOutputBlock());
 
     masterOut.setGainDecibels(masterOutValue->get());
     masterOut.process(inputContext);
@@ -308,42 +284,42 @@ juce::AudioProcessorValueTreeState::ParameterLayout DistorKAudioProcessor::creat
     auto mixRange = NormalisableRange<float>(0, 100, 1, 1);
 
     //Master Controls
+    layout.add(std::make_unique<AudioParameterBool>("toggleEngine", "Engine Toggle", false));
     layout.add(std::make_unique<AudioParameterBool>("globalBypass", "Global Bypass", false));
     layout.add(std::make_unique<AudioParameterBool>("selectClip", "Clipper", false));
-    layout.add(std::make_unique<AudioParameterBool>("bypassClip", "Bypass Clip", false));
     layout.add(std::make_unique<AudioParameterBool>("selectBit", "BitCrusher", false));
-    layout.add(std::make_unique<AudioParameterBool>("bypassBit", "Bypass Bit", false));
     layout.add(std::make_unique<AudioParameterBool>("selectWaveShpr", "WaveShaper", false));
-    layout.add(std::make_unique<AudioParameterBool>("bypassWaveShpr", "Bypass WS", false));
     layout.add(std::make_unique<AudioParameterBool>("selectSat", "Saturation", true));
-    layout.add(std::make_unique<AudioParameterBool>("bypassSat", "Bypass Sat", false));
     layout.add(std::make_unique<AudioParameterFloat>("masterInValue", "Input", gainRange, 0));
     layout.add(std::make_unique<AudioParameterFloat>("masterOutValue", "Output", gainRange, 0));
     layout.add(std::make_unique<AudioParameterFloat>("masterMix", "Dry/Wet", mixRange, 100));
-    layout.add(std::make_unique<AudioParameterInt>("overSampleSelect", "Oversample Rate", 0, 3, 1));
+    layout.add(std::make_unique<AudioParameterInt>("overSampleSelect", "Oversample Rate", 0, 3, 0));
 
     //Clipper Controls
     auto threshRange = NormalisableRange<float>(-60, 0, .1, 1);
+    layout.add(std::make_unique<AudioParameterBool>("toggleClip", "Toggle Clip", false));
     layout.add(std::make_unique<AudioParameterInt>("clipperSelect", "Clipper Type", 0, 5, 0));
     layout.add(std::make_unique<AudioParameterFloat>("clipperThresh", "Threshold", threshRange, 0));
     layout.add(std::make_unique<AudioParameterFloat>("clipperInGain", "In Gain", gainRange, 0));
     layout.add(std::make_unique<AudioParameterFloat>("clipperOutGain", "Out Gain", gainRange, 0));
-    layout.add(std::make_unique<AudioParameterFloat>("clipperMix", "Dry/Wet", mixRange, 0));
+    layout.add(std::make_unique<AudioParameterFloat>("clipperMix", "Dry/Wet", mixRange, 100));
 
     //WaveShaper Controls
     auto lessThanOne = NormalisableRange<float>(.01, .99, .01, 1);
     auto sineFactor = NormalisableRange<float>(.05, .95, .01, 1);
     auto moreThanOne = NormalisableRange<float>(1, 10, .01, 1);
+    layout.add(std::make_unique<AudioParameterBool>("toggleWaveShpr", "Toggle WS", false));
     layout.add(std::make_unique<AudioParameterInt>("waveShaperSelect", "Type", 0, 3, 0));
-    layout.add(std::make_unique<AudioParameterFloat>("waveShaperSin", "Drive", sineFactor, .5));
-    layout.add(std::make_unique<AudioParameterFloat>("waveShaperQuadratic", "Drive", moreThanOne, 5));
-    layout.add(std::make_unique<AudioParameterFloat>("waveShaperFactor", "Drive", lessThanOne, .5));
-    layout.add(std::make_unique<AudioParameterFloat>("waveShaperGB", "Drive", moreThanOne, 5));
+    layout.add(std::make_unique<AudioParameterFloat>("waveShaperSin", "Drive", sineFactor, .05));
+    layout.add(std::make_unique<AudioParameterFloat>("waveShaperQuadratic", "Drive", moreThanOne, 1));
+    layout.add(std::make_unique<AudioParameterFloat>("waveShaperFactor", "Drive", lessThanOne, .05));
+    layout.add(std::make_unique<AudioParameterFloat>("waveShaperGB", "Drive", moreThanOne, 1));
     layout.add(std::make_unique<AudioParameterFloat>("waveShaperInGain", "In Gain", gainRange, 0));
     layout.add(std::make_unique<AudioParameterFloat>("waveShaperOutGain", "Out Gain", gainRange, 0));
     layout.add(std::make_unique<AudioParameterFloat>("waveShaperMix", "Dry/Wet", mixRange, 100));
 
     //BitCrusher Controls
+    layout.add(std::make_unique<AudioParameterBool>("toggleBit", "Toggle Bit", false));
     layout.add(std::make_unique<AudioParameterInt>("crusherBitDepth", "Bit Depth", 1, 16, 16));
     layout.add(std::make_unique<AudioParameterInt>("crusherBitRate", "Bit Rate", 1, 25, 1));
     layout.add(std::make_unique<AudioParameterFloat>("crusherInGain", "In Gain", gainRange, 0));
@@ -352,10 +328,11 @@ juce::AudioProcessorValueTreeState::ParameterLayout DistorKAudioProcessor::creat
 
     //Saturation Controls
     auto driveRange = NormalisableRange<float>(1, 10, .1, 1);
+    layout.add(std::make_unique<AudioParameterBool>("toggleSat", "Toggle Sat", false));
     layout.add(std::make_unique<AudioParameterFloat>("satDrive", "Drive", driveRange, 1));
     layout.add(std::make_unique<AudioParameterFloat>("satInGain", "In Gain", gainRange, 0));
     layout.add(std::make_unique<AudioParameterFloat>("satOutGain", "Out Gain", gainRange, 0));
-    layout.add(std::make_unique<AudioParameterFloat>("satMix", "Dry/Wet", mixRange, 0));
+    layout.add(std::make_unique<AudioParameterFloat>("satMix", "Dry/Wet", mixRange, 100));
 
     return layout;
 }

@@ -35,12 +35,10 @@ ToolbarComp::~ToolbarComp()
 void ToolbarComp::resized()
 {
     auto bounds = getLocalBounds();
-    auto barSelect = bounds.removeFromLeft(bounds.getWidth() * .1);
-    auto overSelect = bounds.removeFromRight(bounds.getWidth() * .11);
+    auto overSelect = bounds.removeFromRight(bounds.getWidth() * .15);
     overSelect.translate(0, 5);
 
-    auto topSelect = barSelect.removeFromTop(barSelect.getHeight() * .33);
-    auto midSelect = barSelect.removeFromTop(barSelect.getHeight() * .5);
+    toolbar.setBounds(bounds);
 
     oversampleSelect->setBounds(overSelect);
 }
@@ -54,10 +52,10 @@ void ToolbarComp::setPowerButtons(juce::AudioProcessorValueTreeState& apvts)
 
     std::vector<juce::String> Names
     {
-        "selectSat",
-        "selectClip",
-        "selectBit",
-        "selectWaveShpr"
+        "toggleSat",
+        "toggleClip",
+        "toggleWaveShpr",
+        "toggleBit",
     };
 
     for (int i = 0; i < children.size(); i++) //maybe change this so it can dynmically update the power buttons

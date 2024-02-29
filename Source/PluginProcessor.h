@@ -14,6 +14,7 @@
 #include "DSP/BitCrusherData.h"
 #include "DSP/SaturationData.h"
 #include "DSP/WaveShaperData.h"
+#include "DSP/DistorkEngine.h"
 
 //==============================================================================
 /**
@@ -63,6 +64,8 @@ public:
     static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
     juce::AudioProcessorValueTreeState apvts{ *this, nullptr, "parameters", createParameterLayout() };
 
+    void setToolbarOrder(std::vector<int> tbOrder) { order = tbOrder; }
+
     LevelMeterData levelMeterData;
 
 private:
@@ -71,6 +74,8 @@ private:
     BitCrusher bitcrusher;
     WaveShaper waveshaper;
     Saturation saturation;
+
+    DistorkEngine distorkEngine;
 
     std::array<juce::dsp::Oversampling<float>, 4> overSamplers
     { {
@@ -100,36 +105,7 @@ private:
     juce::AudioParameterFloat* masterMix{ nullptr };
     juce::AudioParameterInt* overSampleSelect{ nullptr };
 
-    //Clipper Params
-    juce::AudioParameterInt* clipperSelect{ nullptr };
-    juce::AudioParameterFloat* clipperThresh{ nullptr };
-    juce::AudioParameterFloat* clipperInGain{ nullptr };
-    juce::AudioParameterFloat* clipperOutGain{ nullptr };
-    juce::AudioParameterFloat* clipperMix{ nullptr };
-
-    //WaveShaper Params
-    juce::AudioParameterInt* waveShaperSelect{ nullptr };
-    juce::AudioParameterFloat* waveShaperSin{ nullptr };
-    juce::AudioParameterFloat* waveShaperQuadratic{ nullptr };
-    juce::AudioParameterFloat* waveShaperFactor{ nullptr };
-    juce::AudioParameterFloat* waveShaperGB{ nullptr };
-    juce::AudioParameterFloat* waveShaperInGain{ nullptr };
-    juce::AudioParameterFloat* waveShaperOutGain{ nullptr };
-    juce::AudioParameterFloat* waveShaperMix{ nullptr };
-    std::vector<juce::AudioParameterFloat*> waveShaperFactorsHolder{ waveShaperSin, waveShaperQuadratic, waveShaperFactor, waveShaperGB };
-
-    //BitCrusher Params
-    juce::AudioParameterInt* crusherBitDepth{ nullptr };
-    juce::AudioParameterInt* crusherBitRate{ nullptr };
-    juce::AudioParameterFloat* crusherInGain{ nullptr };
-    juce::AudioParameterFloat* crusherOutGain{ nullptr };
-    juce::AudioParameterFloat* crusherMix{ nullptr };
-
-    //Saturation Params
-    juce::AudioParameterFloat* satDrive{ nullptr };
-    juce::AudioParameterFloat* satInGain{ nullptr };
-    juce::AudioParameterFloat* satOutGain{ nullptr };
-    juce::AudioParameterFloat* satMix{ nullptr };
+    std::vector<int> order{ 1, 2, 3, 4 };
 
     //Todo
     //Get waveShaper working

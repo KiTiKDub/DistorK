@@ -14,47 +14,17 @@ DistorKAudioProcessorEditor::DistorKAudioProcessorEditor (DistorKAudioProcessor&
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
     setLookAndFeel(&lnf);
-    addAndMakeVisible(toggleComp);
+
+    addAndMakeVisible(toolbar);
     addAndMakeVisible(masterComp);
     addAndMakeVisible(satComp);
     addChildComponent(bitComp);
     addChildComponent(clipperComp);
     addChildComponent(wsComp);
     addAndMakeVisible(gumroad);
-
-    toggleComp.selectSat.onClick = [this]()
-        {
-            satComp.setVisible(true);
-            bitComp.setVisible(false);
-            clipperComp.setVisible(false);
-            wsComp.setVisible(false);
-        };
-
-    toggleComp.selectBit.onClick = [this]()
-        {
-            satComp.setVisible(false);
-            bitComp.setVisible(true);
-            clipperComp.setVisible(false);
-            wsComp.setVisible(false);
-        };
-
-    toggleComp.selectClip.onClick = [this]()
-        {
-            satComp.setVisible(false);
-            bitComp.setVisible(false);
-            clipperComp.setVisible(true);
-            wsComp.setVisible(false);
-        };
-
-    toggleComp.selectWaveShpr.onClick = [this]()
-        {
-            satComp.setVisible(false);
-            bitComp.setVisible(false);
-            clipperComp.setVisible(false);
-            wsComp.setVisible(true);
-        };
     
     setSize (700, 500);
+    startTimerHz(24);
 }
 
 DistorKAudioProcessorEditor::~DistorKAudioProcessorEditor()
@@ -104,7 +74,7 @@ void DistorKAudioProcessorEditor::resized()
     auto selectArea = bounds.removeFromBottom(bounds.getHeight() * .15);
     auto masterArea = bounds.removeFromRight(bounds.getWidth() * .3);
 
-    toggleComp.setBounds(selectArea);
+    toolbar.setBounds(selectArea);
     masterComp.setBounds(masterArea);
 
     satComp.setBounds(bounds);
@@ -120,6 +90,63 @@ void DistorKAudioProcessorEditor::resized()
     gumroad.setFont(font, false);
     gumroad.setColour(0x1001f00, juce::Colours::white);
     gumroad.setBounds(linkSpace);
+}
+
+void DistorKAudioProcessorEditor::timerCallback()
+{
+    if (toolbar.isMouseOver(true)) 
+        displayCorrectDistortion();
+
+    masterComp.update();
+    audioProcessor.setToolbarOrder(toolbar.getToolbar()->getAllItems());
+}
+
+void DistorKAudioProcessorEditor::displayCorrectDistortion()
+{
+    auto currentToolbar = toolbar.getToolbar();
+
+    auto& childComps = currentToolbar->getChildren();
+    for (auto* child : childComps)
+    {
+        if (auto* tbComp = dynamic_cast<KitikToolbarItemComponent*>(child))
+        {
+            if (tbComp->isClicked)
+            {
+                auto name = tbComp->getName();
+
+                if (name == "Saturation")
+                {
+                    satComp.setVisible(true);
+                    clipperComp.setVisible(false);
+                    wsComp.setVisible(false);
+                    bitComp.setVisible(false);
+                }
+                else if (name == "Clipper")
+                {
+                    satComp.setVisible(false);
+                    clipperComp.setVisible(true);
+                    wsComp.setVisible(false);
+                    bitComp.setVisible(false);
+
+                }
+                else if (name == "Waveshaper")
+                {
+                    satComp.setVisible(false);
+                    clipperComp.setVisible(false);
+                    wsComp.setVisible(true);
+                    bitComp.setVisible(false);
+                }
+                else if (name == "Bitcrusher")
+                {
+                    satComp.setVisible(false);
+                    clipperComp.setVisible(false);
+                    wsComp.setVisible(false);
+                    bitComp.setVisible(true);
+                }
+
+            }
+        }
+    }
 }
 
 

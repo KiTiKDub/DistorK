@@ -18,11 +18,13 @@
 #include "GUI/Clipper.h"
 #include "GUI/WaveShaper.h"
 #include "GUI/MasterControls.h"
+#include "GUI/Toolbar.h"
 
 //==============================================================================
 /**
 */
-class DistorKAudioProcessorEditor  : public juce::AudioProcessorEditor
+class DistorKAudioProcessorEditor  : public juce::AudioProcessorEditor,
+                                     public juce::Timer
 {
 public:
     DistorKAudioProcessorEditor (DistorKAudioProcessor&);
@@ -31,9 +33,12 @@ public:
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
+    void timerCallback() override;
 
 private:
     
+    void displayCorrectDistortion();
+
     DistorKAudioProcessor& audioProcessor;
 
     Laf lnf;
@@ -42,7 +47,8 @@ private:
 
     juce::HyperlinkButton gumroad{ "More Plugins", url };
 
-    ToggleComp toggleComp{ audioProcessor.apvts };
+    //ToggleComp toggleComp{ audioProcessor.apvts };
+    ToolbarComp toolbar{ audioProcessor.apvts };
     MasterComp masterComp{ audioProcessor };
     SaturationComp satComp{ audioProcessor.apvts };
     BitCrusherComp bitComp{ audioProcessor.apvts };

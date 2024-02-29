@@ -14,7 +14,6 @@
 #include "rotarySliderWithLabels.h"
 #include "../Utility/KitikToolbar.h"
 #include "../PluginProcessor.h"
-#include "../Utility/Params.h"
 
 
 struct ToolbarItem : public KitikToolbarItemComponent
@@ -139,17 +138,9 @@ private:
     ToolbarFactory tbf;
     Laf lnf;
 
-    std::unique_ptr<Attachment> satToggleHighAT, satToggleMidAT, satToggleLowAT, satToggleSingleAT,
-                                clipToggleHighAT, clipToggleMidAT, clipToggleLowAT, clipToggleSingleAT,
-                                waveToggleHighAT, waveToggleMidAT, waveToggleLowAT, waveToggleSingleAT,
-                                bitToggleHighAT, bitToggleMidAT, bitToggleLowAT, bitToggleSingleAT,
-                                folderToggleHighAT, folderToggleMidAT, folderToggleLowAT, folderToggleSingleAT;
+    std::unique_ptr<Attachment> satToggleAT, clipToggleAT,  waveToggleAT, bitToggleAT;
 
-    std::vector<std::unique_ptr<Attachment>*> vectorAT{&satToggleHighAT, &satToggleMidAT, &satToggleLowAT, &satToggleSingleAT,
-                                                       &clipToggleHighAT, &clipToggleMidAT, &clipToggleLowAT, &clipToggleSingleAT,
-                                                       &waveToggleHighAT, &waveToggleMidAT, &waveToggleLowAT, &waveToggleSingleAT,
-                                                       &bitToggleHighAT, &bitToggleMidAT, &bitToggleLowAT, &bitToggleSingleAT,
-                                                       &folderToggleHighAT, &folderToggleMidAT, &folderToggleLowAT, &folderToggleSingleAT};
+    std::vector<std::unique_ptr<Attachment>*> vectorAT{ &satToggleAT, &clipToggleAT, &waveToggleAT, &bitToggleAT };
 
     std::unique_ptr<RotarySliderWithLabels> oversampleSelect;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> oversampleSelectAT;
