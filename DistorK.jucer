@@ -9,6 +9,11 @@
             file="../../Muisc/Pictures/KITIK_LOGO_NO_BKGD.png"/>
     </GROUP>
     <GROUP id="{A5DCB423-D169-7943-36DB-439E32FEAF46}" name="Source">
+      <GROUP id="{17A8C3B8-E8EF-294F-E69D-9BE998CF33FE}" name="Utility">
+        <FILE id="se9YaF" name="KitikToolbar.cpp" compile="1" resource="0"
+              file="Source/Utility/KitikToolbar.cpp"/>
+        <FILE id="fD0501" name="KitikToolbar.h" compile="0" resource="0" file="Source/Utility/KitikToolbar.h"/>
+      </GROUP>
       <GROUP id="{73268F9D-75C4-DBFD-0DF0-7357DA84ADA1}" name="GUI">
         <FILE id="ysqgDx" name="BitCrusher.cpp" compile="1" resource="0" file="Source/GUI/BitCrusher.cpp"/>
         <FILE id="anB5Zt" name="BitCrusher.h" compile="0" resource="0" file="Source/GUI/BitCrusher.h"/>
@@ -34,6 +39,8 @@
               file="Source/GUI/SliderWithLabels.h"/>
         <FILE id="gRZJvj" name="Toggle.cpp" compile="1" resource="0" file="Source/GUI/Toggle.cpp"/>
         <FILE id="sviNrn" name="Toggle.h" compile="0" resource="0" file="Source/GUI/Toggle.h"/>
+        <FILE id="spxF6R" name="Toolbar.cpp" compile="1" resource="0" file="Source/GUI/Toolbar.cpp"/>
+        <FILE id="Msn1Gh" name="Toolbar.h" compile="0" resource="0" file="Source/GUI/Toolbar.h"/>
         <FILE id="JsJxem" name="WaveShaper.cpp" compile="1" resource="0" file="Source/GUI/WaveShaper.cpp"/>
         <FILE id="UpbG22" name="WaveShaper.h" compile="0" resource="0" file="Source/GUI/WaveShaper.h"/>
       </GROUP>
@@ -44,6 +51,9 @@
               file="Source/DSP/BitCrusherData.h"/>
         <FILE id="WWyJp6" name="clipperData.cpp" compile="1" resource="0" file="Source/DSP/clipperData.cpp"/>
         <FILE id="kN7CxG" name="clipperData.h" compile="0" resource="0" file="Source/DSP/clipperData.h"/>
+        <FILE id="GJ9s7F" name="DistorkEngine.cpp" compile="1" resource="0"
+              file="Source/DSP/DistorkEngine.cpp"/>
+        <FILE id="haNOdf" name="DistorkEngine.h" compile="0" resource="0" file="Source/DSP/DistorkEngine.h"/>
         <FILE id="U2c5w0" name="kLevelMeterData.h" compile="0" resource="0"
               file="Source/DSP/kLevelMeterData.h"/>
         <FILE id="ZTmX4g" name="SaturationData.cpp" compile="1" resource="0"
