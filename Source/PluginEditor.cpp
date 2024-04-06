@@ -45,9 +45,9 @@ void DistorKAudioProcessorEditor::paint (juce::Graphics& g)
     logoSpace.setY(bounds.getTopLeft().getY());
     logoSpace.translate(-25, -10);
 
-    auto logo = juce::ImageCache::getFromMemory(BinaryData::KITIK_LOGO_NO_BKGD_png, BinaryData::KITIK_LOGO_NO_BKGD_pngSize);
+    //auto logo = juce::ImageCache::getFromMemory(BinaryData::KITIK_LOGO_NO_BKGD_png, BinaryData::KITIK_LOGO_NO_BKGD_pngSize);
     g.setOpacity(.8);
-    g.drawImage(logo, logoSpace.toFloat(), juce::RectanglePlacement::centred);
+    //g.drawImage(logo, logoSpace.toFloat(), juce::RectanglePlacement::centred);
     g.setOpacity(1);
 
     g.setFont(15.0f);
@@ -86,7 +86,7 @@ void DistorKAudioProcessorEditor::resized()
     linkSpace.setX(bounds.getTopRight().getX() - linkSpace.getWidth());
     linkSpace.setY(bounds.getTopRight().getY());
 
-    auto font = juce::Font::Font();
+    auto font = juce::Font();
     gumroad.setFont(font, false);
     gumroad.setColour(0x1001f00, juce::Colours::white);
     gumroad.setBounds(linkSpace);

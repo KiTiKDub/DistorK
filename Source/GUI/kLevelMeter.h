@@ -29,7 +29,7 @@ struct LevelMeter : juce::Component
         g.fillRect(bounds);
 
         //get gradient
-        auto gradient = ColourGradient::ColourGradient(Colours::green, bounds.getBottomLeft(), Colours::red, bounds.getTopLeft(), false);
+        auto gradient = ColourGradient(Colours::green, bounds.getBottomLeft(), Colours::red, bounds.getTopLeft(), false);
         gradient.addColour(.5f, Colours::yellow);
         g.setGradientFill(gradient);
 

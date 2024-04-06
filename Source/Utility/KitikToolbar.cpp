@@ -147,9 +147,9 @@ void KitikToolbarItemComponent::setEditingMode(const TestToolbarEditingMode newM
 //==============================================================================
 std::unique_ptr<AccessibilityHandler> KitikToolbarItemComponent::createAccessibilityHandler()
 {
-    const auto shouldItemBeAccessible = (itemId != ToolbarItemFactory::separatorBarId
-        && itemId != ToolbarItemFactory::spacerId
-        && itemId != ToolbarItemFactory::flexibleSpacerId);
+//    const auto shouldItemBeAccessible = (itemId != ToolbarItemFactory::separatorBarId
+//        && itemId != ToolbarItemFactory::spacerId
+//        && itemId != ToolbarItemFactory::flexibleSpacerId);
 
     return createIgnoredAccessibilityHandler(*this);
 
@@ -182,7 +182,7 @@ void KitikToolbarItemComponent::mouseDrag(const MouseEvent& e)
 
         if (DragAndDropContainer* const dnd = DragAndDropContainer::findParentDragContainerFor(this))
         {
-            auto index = getIndexOfChildComponent(this);
+            //auto index = getIndexOfChildComponent(this);
             dnd->startDragging(KitikToolbar::toolbarDragDescriptor, this, ScaledImage(), true, nullptr, &e.source);
 
             if (KitikToolbarItemComponent* const tc = this)
@@ -681,23 +681,7 @@ void KitikToolbar::updateAllItemPositions(bool animate)
         for (int i = 0; i < resizer.getNumItems(); ++i)
             totalLength += (int)resizer.getItemSize(i);
 
-        const bool itemsOffTheEnd = totalLength > getLength();
-
-        auto extrasButtonSize = getThickness() / 2;
-        missingItemsButton->setSize(extrasButtonSize, extrasButtonSize);
-        missingItemsButton->setVisible(itemsOffTheEnd);
-        missingItemsButton->setEnabled(!isEditingActive);
-
-        if (vertical)
-            missingItemsButton->setCentrePosition(getWidth() / 2,
-                getHeight() - 4 - extrasButtonSize / 2);
-        else
-            missingItemsButton->setCentrePosition(getWidth() - 4 - extrasButtonSize / 2,
-                getHeight() / 2);
-
-        auto maxLength = itemsOffTheEnd ? (vertical ? missingItemsButton->getY()
-            : missingItemsButton->getX()) - 4
-            : getLength();
+        auto maxLength = getLength();
 
         int pos = 0, activeIndex = 0;
 
@@ -858,7 +842,7 @@ void KitikToolbar::itemDropped(const SourceDetails& dragSourceDetails)
 
 void KitikToolbar::lookAndFeelChanged()
 {
-    missingItemsButton.reset(getLookAndFeel().createToolbarMissingItemsButton(juce::Toolbar{}));
+    //missingItemsButton.reset(getLookAndFeel().createToolbarMissingItemsButton(juce::Toolbar{}));
     initMissingItemButton();
 }
 

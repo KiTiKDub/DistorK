@@ -39,7 +39,7 @@ void MasterComp::paint(juce::Graphics& g)
     auto meterBounds = bounds.reduced(0, bounds.getHeight() * .1);
     meterBounds.translate(0, -bounds.getHeight() * .025);
     auto topBounds = bounds.removeFromTop(bounds.getHeight() * .07);
-    auto bottomBounds = bounds.removeFromBottom(bounds.getHeight() * .11);
+    bounds.removeFromBottom(bounds.getHeight() * .11);
     g.setColour(juce::Colour(64u, 194u, 230u));
 
     juce::Line<int> line;
@@ -71,8 +71,8 @@ void MasterComp::paint(juce::Graphics& g)
     g.drawFittedText((juce::String)input, leftMetersbounds, juce::Justification::centredTop, 1);
     g.drawFittedText((juce::String)output, rightMetersBounds, juce::Justification::centredTop, 1);
     
-    auto newFont = juce::Font(juce::Typeface::createSystemTypefaceFor(BinaryData::OFFSHORE_TTF, BinaryData::OFFSHORE_TTFSize));
-    g.setFont(newFont);
+    //auto newFont = juce::Font(juce::Typeface::createSystemTypefaceFor(BinaryData::OFFSHORE_TTF, BinaryData::OFFSHORE_TTFSize));
+    //g.setFont(newFont);
     g.setFont(topBounds.getHeight() * .95);
     g.drawFittedText("DistorK", topBounds, juce::Justification::centred, 1);
 }
@@ -82,7 +82,7 @@ void MasterComp::resized()
     auto bounds = getLocalBounds();
     auto meterBounds = bounds.reduced(0, bounds.getHeight() * .1);
     meterBounds.translate(0, -bounds.getHeight() * .025);
-    auto topBounds = bounds.removeFromTop(bounds.getHeight() * .07);
+    bounds.removeFromTop(bounds.getHeight() * .07);
     auto bottomBounds = bounds.removeFromBottom(bounds.getHeight() * .15);
     bottomBounds.reduce(bottomBounds.getWidth() * .05, 0);
 

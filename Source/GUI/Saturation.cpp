@@ -29,13 +29,13 @@ SaturationComp::~SaturationComp()
 
 void SaturationComp::paint(juce::Graphics& g)
 {
-    auto bounds = getLocalBounds();
-    g.setColour(juce::Colours::white);
-
-    auto bigKnob = bounds.removeFromTop(bounds.getHeight() * .7);
-
-    auto leftSide = bounds.removeFromLeft(bounds.getWidth() * .33);
-    auto rightSide = bounds.removeFromRight(bounds.getWidth() * .5);
+//    auto bounds = getLocalBounds();
+//    g.setColour(juce::Colours::white);
+//
+//    auto bigKnob = bounds.removeFromTop(bounds.getHeight() * .7);
+//
+//    auto leftSide = bounds.removeFromLeft(bounds.getWidth() * .33);
+//    auto rightSide = bounds.removeFromRight(bounds.getWidth() * .5);
 
     /*g.drawRect(leftSide);
     g.drawRect(rightSide);

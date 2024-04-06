@@ -197,7 +197,7 @@ void DistorKAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
 {
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
-    auto totalNumOutputChannels = getTotalNumOutputChannels();
+    //auto totalNumOutputChannels = getTotalNumOutputChannels();
 
     if (globalBypass->get()) { return; }
 
@@ -280,16 +280,16 @@ juce::AudioProcessorValueTreeState::ParameterLayout DistorKAudioProcessor::creat
     auto mixRange = NormalisableRange<float>(0, 100, 1, 1);
 
     //Master Controls
-    layout.add(std::make_unique<AudioParameterBool>("toggleEngine", "Engine Toggle", false));
-    layout.add(std::make_unique<AudioParameterBool>("globalBypass", "Global Bypass", false));
-    layout.add(std::make_unique<AudioParameterBool>("selectClip", "Clipper", false));
-    layout.add(std::make_unique<AudioParameterBool>("selectBit", "BitCrusher", false));
-    layout.add(std::make_unique<AudioParameterBool>("selectWaveShpr", "WaveShaper", false));
-    layout.add(std::make_unique<AudioParameterBool>("selectSat", "Saturation", true));
-    layout.add(std::make_unique<AudioParameterFloat>("masterInValue", "Input", gainRange, 0));
-    layout.add(std::make_unique<AudioParameterFloat>("masterOutValue", "Output", gainRange, 0));
-    layout.add(std::make_unique<AudioParameterFloat>("masterMix", "Dry/Wet", mixRange, 100));
-    layout.add(std::make_unique<AudioParameterInt>("overSampleSelect", "Oversample Rate", 0, 3, 0));
+    layout.add(std::make_unique<AudioParameterBool>(juce::ParameterID{"toggleEngine", 1}, "Engine Toggle", false));
+    layout.add(std::make_unique<AudioParameterBool>(juce::ParameterID{"globalBypass", 1}, "Global Bypass", false));
+    layout.add(std::make_unique<AudioParameterBool>(juce::ParameterID{"selectClip", 1}, "Clipper", false));
+    layout.add(std::make_unique<AudioParameterBool>(juce::ParameterID{"selectBit", 1}, "BitCrusher", false));
+    layout.add(std::make_unique<AudioParameterBool>(juce::ParameterID{"selectWaveShpr", 1}, "WaveShaper", false));
+    layout.add(std::make_unique<AudioParameterBool>(juce::ParameterID{"selectSat", 1}, "Saturation", true));
+    layout.add(std::make_unique<AudioParameterFloat>(juce::ParameterID{"masterInValue",1}, "Input", gainRange, 0));
+    layout.add(std::make_unique<AudioParameterFloat>(juce::ParameterID{"masterOutValue",1}, "Output", gainRange, 0));
+    layout.add(std::make_unique<AudioParameterFloat>(juce::ParameterID{"masterMix", 1}, "Dry/Wet", mixRange, 100));
+    layout.add(std::make_unique<AudioParameterInt>(juce::ParameterID{"overSampleSelect", 1}, "Oversample Rate", 0, 3, 0));
 
     //Clipper Controls
     auto threshRange = NormalisableRange<float>(-60, 0, .1, 1);

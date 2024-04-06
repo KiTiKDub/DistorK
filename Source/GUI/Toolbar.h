@@ -113,7 +113,8 @@ struct ToolbarFactory : public TestToolbarItemFactory
         case bitcrusher:
             return new ToolbarItem(bitcrusher, "Bitcrusher");
         }
-
+        
+        return nullptr;
     }
 };
 

@@ -163,7 +163,7 @@ void Laf::drawToggleButton(juce::Graphics& g, juce::ToggleButton& button,
 void Laf::drawLinearSlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos, float minSliderPos, float maxSliderPos, const juce::Slider::SliderStyle style, juce::Slider& slider)
 {
     using namespace juce;
-    auto boundsFull = Rectangle<int>(x, y, width, height).toFloat();
+    //auto boundsFull = Rectangle<int>(x, y, width, height).toFloat();
 
     if (slider.isBar())
     {
@@ -225,7 +225,7 @@ void Laf::drawLinearSlider(juce::Graphics& g, int x, int y, int width, int heigh
         {
             auto name = slider.getName();
             auto value = static_cast<String>(slider.getValue());
-            auto thumb = slider.getThumbBeingDragged();
+            //auto thumb = slider.getThumbBeingDragged();
 
             auto font = g.getCurrentFont();
             //auto newWidth = font.getStringWidth(name);

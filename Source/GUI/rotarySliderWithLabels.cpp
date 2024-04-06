@@ -20,7 +20,7 @@ void RotarySliderWithLabels::paint(juce::Graphics& g) {
 
     auto sliderBounds = getSliderBounds();
 
-    auto bounds = getLocalBounds();
+    //auto bounds = getLocalBounds();
     g.setColour(Colours::white);
 
     getLookAndFeel().drawRotarySlider(g,
@@ -48,14 +48,14 @@ void RotarySliderWithLabels::paint(juce::Graphics& g) {
     {
         Rectangle<float> r;
         Point<float> c;
-        float ang;
+        //float ang;
 
         auto pos = labels[i].pos;
         auto str = labels[i].label;
         auto textHeight = labels[i].fontSize;
         g.setFont(textHeight);
         auto strWidth = g.getCurrentFont().getStringWidth(str);
-        float extraPush = 0;
+        //float extraPush = 0;
         
         r.setSize(strWidth, textHeight); //draww text on edge of slider bounds, or create a slightly bigger bounds and draw them on that
 

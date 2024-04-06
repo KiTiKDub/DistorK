@@ -67,6 +67,8 @@ juce::RangedAudioParameter& getParam(APVTS& apvts, const Name& name)
     return *param;
 }
 
+juce::String getValString(const juce::RangedAudioParameter& param, bool getLow, juce::String suffix, std::vector<juce::String>);
+
 template <
     typename Labels,
     typename ParamType,
@@ -78,5 +80,3 @@ void addLabelPairs(Labels& labels, const int posOne, const int posTwo, const Par
     labels.add({ posOne, getValString(param, true, suffix, array), fontSize });
     labels.add({ posTwo, getValString(param, false, suffix, array), fontSize });
 }
-
-juce::String getValString(const juce::RangedAudioParameter& param, bool getLow, juce::String suffix, std::vector<juce::String>);

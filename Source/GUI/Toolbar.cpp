@@ -47,8 +47,10 @@ void ToolbarComp::setPowerButtons(juce::AudioProcessorValueTreeState& apvts)
 {
     auto children = toolbar.getChildren();
 
-    //Needs to remove "Additional Items" from the array
+    //Needs to remove "Additional Items" from the array, windows only
+#if JUCE_WINDOWS
     children.removeLast(1);
+#endif
 
     std::vector<juce::String> Names
     {

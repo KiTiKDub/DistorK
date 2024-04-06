@@ -67,6 +67,8 @@ juce::RangedAudioParameter& getSliderParam(APVTS& apvts, const Name& name)
     return *param;
 }
 
+juce::String getValString(const juce::RangedAudioParameter& param, bool getLow, juce::String suffix);
+
 template <
     typename Labels,
     typename ParamType,
@@ -78,5 +80,3 @@ void addLabelPairs(Labels& labels, const ParamType& param, const SuffixType& suf
     labels.add({ 1, getValString(param, true, suffix), fontSize });
     labels.add({ 2, getValString(param, false, suffix), fontSize });
 }
-
-juce::String getValString(const juce::RangedAudioParameter& param, bool getLow, juce::String suffix);

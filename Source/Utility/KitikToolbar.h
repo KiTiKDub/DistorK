@@ -152,7 +152,7 @@ public:
 
     int getItemId(int itemIndex) const noexcept;
 
-    std::vector<int> KitikToolbar::getAllItems();
+    std::vector<int> getAllItems();
 
     KitikToolbarItemComponent* getItemComponent(int itemIndex) const noexcept;
 
