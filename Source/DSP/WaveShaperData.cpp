@@ -21,42 +21,43 @@ void WaveShaper::prepareToPlay(juce::dsp::ProcessSpec& spec)
     outGain.setRampDurationSeconds(.05);
 }
 
-void WaveShaper::process(juce::dsp::AudioBlock<float>& block, int channel)
+void WaveShaper::process(juce::dsp::ProcessContextReplacing<float>& context, int ovRate, std::array<juce::dsp::Oversampling<float>, 4>& overSamplers)
 {
     if (waveShaperBypass) { return; };
 
-    auto context = juce::dsp::ProcessContextReplacing<float>(block);
+    inGain.setGainDecibels(waveShaperInGainValue);
+    inGain.process(context);
 
-    if (channel == 0)
+    auto ovBlock = overSamplers[ovRate].processSamplesUp(context.getInputBlock());
+
+    for (int channel = 0; channel < ovBlock.getNumChannels(); channel++)
     {
-        inGain.setGainDecibels(waveShaperInGainValue);
-        inGain.process(context);
+
+        switch (waveShaperTypeSelect)
+        {
+        case WaveShaper::sinusoidal:
+            processSinusoidal(channel, ovBlock);
+            break;
+
+        case WaveShaper::quadratic:
+            processQuadratic(channel, ovBlock);
+            break;
+
+        case WaveShaper::factor:
+            processFactor(channel, ovBlock);
+            break;
+
+        case WaveShaper::GloubiBoulga:
+            processGB(channel, ovBlock);
+            break;
+        }
+
     }
 
-    switch (waveShaperTypeSelect)
-    {
-    case WaveShaper::sinusoidal:
-        processSinusoidal(channel, context);
-        break;
+    overSamplers[ovRate].processSamplesDown(context.getOutputBlock());
 
-    case WaveShaper::quadratic:
-        processQuadratic(channel, context);
-        break;
-
-    case WaveShaper::factor:
-        processFactor(channel, context);
-        break;
-
-    case WaveShaper::GloubiBoulga:
-        processGB(channel, context);
-        break;
-    }
-
-    if(channel == 0)
-    {
-        outGain.setGainDecibels(waveShaperOutGainValue);
-        outGain.process(context);
-    }
+    outGain.setGainDecibels(waveShaperOutGainValue);
+    outGain.process(context);
 }
 
 void WaveShaper::updateParams(bool bypass, int typeSelect, std::vector<juce::AudioParameterFloat*>& factors, float inGain, float outGain, float mix)
@@ -69,7 +70,7 @@ void WaveShaper::updateParams(bool bypass, int typeSelect, std::vector<juce::Aud
     waveshaperMix = mix/100;
 }
 
-void WaveShaper::processSinusoidal(int channel, juce::dsp::ProcessContextReplacing<float>& context)
+void WaveShaper::processSinusoidal(int channel, juce::dsp::AudioBlock<float>& block)
 {
     auto factor = waveShaperFactors[0]->get();
 
@@ -77,65 +78,61 @@ void WaveShaper::processSinusoidal(int channel, juce::dsp::ProcessContextReplaci
     auto a = (1 / sin(z));
     auto b = 1 / factor;
 
-    auto* channelInput = context.getInputBlock().getChannelPointer(channel);
-    auto* channelOutput = context.getOutputBlock().getChannelPointer(channel);
+    auto data = block.getChannelPointer(channel);
 
-    for (int s = 0; s < context.getInputBlock().getNumSamples(); ++s)
+    for (int s = 0; s < block.getNumSamples(); ++s)
     {
-        if (channelInput[s] > b)
+        if (data[s] > b)
         {
-            channelOutput[s] = (1 * waveshaperMix) + (channelInput[s] * (1-waveshaperMix));
+            data[s] = (1 * waveshaperMix) + (data[s] * (1-waveshaperMix));
         }
         else
         {
-            channelOutput[s] = ((sin(z * channelInput[s]) * a) * waveshaperMix) + (channelInput[s] * (1 - waveshaperMix));
+            data[s] = ((sin(z * data[s]) * a) * waveshaperMix) + (data[s] * (1 - waveshaperMix));
         }
 
     }
 }
 
-void WaveShaper::processQuadratic(int channel, juce::dsp::ProcessContextReplacing<float>& context)
+void WaveShaper::processQuadratic(int channel, juce::dsp::AudioBlock<float>& block)
 {
-    auto* channelInput = context.getInputBlock().getChannelPointer(channel);
-    auto* channelOutput = context.getOutputBlock().getChannelPointer(channel);
-
     auto factor = waveShaperFactors[1]->get();
 
-    for (int s = 0; s < context.getInputBlock().getNumSamples(); ++s)
+    auto data = block.getChannelPointer(channel);
+
+    for (int s = 0; s < block.getNumSamples(); ++s)
     {
-        auto shape = channelInput[s] * (abs(channelInput[s]) + factor) / (pow(channelInput[s], 2) + (factor - 1) * abs(channelInput[s]) + 1);
-        channelOutput[s] = (shape * waveshaperMix) + (channelInput[s] * (1-waveshaperMix));
+        auto shape = data[s] * (abs(data[s]) + factor) / (pow(data[s], 2) + (factor - 1) * abs(data[s]) + 1);
+        data[s] = (shape * waveshaperMix) + (data[s] * (1-waveshaperMix));
     }
 }
 
-void WaveShaper::processFactor(int channel, juce::dsp::ProcessContextReplacing<float>& context)
+void WaveShaper::processFactor(int channel, juce::dsp::AudioBlock<float>& block)
 {
-    auto* channelInput = context.getInputBlock().getChannelPointer(channel);
-    auto* channelOutput = context.getOutputBlock().getChannelPointer(channel);
-
     auto vectorFactor = waveShaperFactors[2]->get();
     auto factor = 2 * vectorFactor / (1 - vectorFactor);
 
-    for (int s = 0; s < context.getInputBlock().getNumSamples(); ++s)
+    auto data = block.getChannelPointer(channel);
+
+    for (int s = 0; s < block.getNumSamples(); ++s)
     {
-        auto shape = ((1 + factor) * channelInput[s]) / (1 + factor * abs(channelInput[s]));
-        channelOutput[s] = (shape * waveshaperMix) + (channelInput[s] * (1 - waveshaperMix));
+        auto shape = ((1 + factor) * data[s]) / (1 + factor * abs(data[s]));
+        data[s] = (shape * waveshaperMix) + (data[s] * (1 - waveshaperMix));
     }
 }
 
-void WaveShaper::processGB(int channel, juce::dsp::ProcessContextReplacing<float>& context)
+void WaveShaper::processGB(int channel, juce::dsp::AudioBlock<float>& block)
 {
-    auto* channelInput = context.getInputBlock().getChannelPointer(channel);
-    auto* channelOutput = context.getOutputBlock().getChannelPointer(channel);
-
     auto factor = waveShaperFactors[3]->get();
 
-    for (int s = 0; s < context.getInputBlock().getNumSamples(); ++s)
+    auto data = block.getChannelPointer(channel);
+
+    for (int s = 0; s < block.getNumSamples(); ++s)
     {
-        auto distort = channelInput[s] * factor;
+        auto distort = data[s] * factor;
         auto constant = 1 + exp(sqrt(fabs(distort)) * -0.75);
 
         auto shape = (exp(distort) - exp(-distort * constant)) / (exp(distort) + exp(-distort));
-        channelOutput[s] = (shape * waveshaperMix) + (channelInput[s] * (1 - waveshaperMix));
+        data[s] = (shape * waveshaperMix) + (data[s] * (1 - waveshaperMix));
     }
 }

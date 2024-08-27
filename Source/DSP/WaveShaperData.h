@@ -13,15 +13,15 @@
 struct WaveShaper 
 {
     void prepareToPlay(juce::dsp::ProcessSpec& spec);
-    void process(juce::dsp::AudioBlock<float>& block, int channel);
+    void process(juce::dsp::ProcessContextReplacing<float>& context, int ovRate, std::array<juce::dsp::Oversampling<float>, 4>& oversampelers);
     void updateParams(bool bypass, int typeSelect, std::vector<juce::AudioParameterFloat*>& factors, float inGain, float outGain, float mix);
 
 private:
 
-    void processSinusoidal(int channel, juce::dsp::ProcessContextReplacing<float>& context);
-    void processQuadratic(int channel, juce::dsp::ProcessContextReplacing<float>& context);
-    void processFactor(int channel, juce::dsp::ProcessContextReplacing<float>& context);
-    void processGB(int channel, juce::dsp::ProcessContextReplacing<float>& context);
+    void processSinusoidal(int channel, juce::dsp::AudioBlock<float>& block);
+    void processQuadratic(int channel, juce::dsp::AudioBlock<float>& block);
+    void processFactor(int channel, juce::dsp::AudioBlock<float>& block);
+    void processGB(int channel, juce::dsp::AudioBlock<float>& block);
 
     enum WaveShaperSelect {
         sinusoidal,

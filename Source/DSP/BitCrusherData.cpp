@@ -21,44 +21,44 @@ void BitCrusher::prepareToPlay(juce::dsp::ProcessSpec& spec)
     outGain.setRampDurationSeconds(.05);
 }
 
-void BitCrusher::process(juce::dsp::AudioBlock<float>& block, int channel)
+void BitCrusher::process(juce::dsp::ProcessContextReplacing<float>& context, int ovRate, std::array<juce::dsp::Oversampling<float>, 4>& overSamplers)
 {
     if (crusherBypass) { return; };
 
-    auto context = juce::dsp::ProcessContextReplacing<float>(block);
 
-    auto channelInput = context.getInputBlock().getChannelPointer(channel);
-    auto channelOutput = context.getOutputBlock().getChannelPointer(channel);
 
-    if (channel == 0)
+    inGain.setGainDecibels(crusherInGain);
+    inGain.process(context);
+
+    auto ovBlock = overSamplers[ovRate].processSamplesUp(context.getInputBlock());
+
+    for (int channel = 0; channel < ovBlock.getNumChannels(); channel++)
     {
-        inGain.setGainDecibels(crusherInGain);
-        inGain.process(context);
-    }
+        auto data = ovBlock.getChannelPointer(channel);
 
-    for (int s = 0; s < context.getInputBlock().getNumSamples(); ++s)
-    {
-        auto input = channelInput[s];
-        auto crusher = pow(2, crusherBitDepth);
-        auto crushedData = floor(crusher * input) / crusher;
-
-        channelOutput[s] = (crushedData * crusherMix) + (input * (1 - crusherMix));
-
-        if (crusherBitRate > 1)
+        for (int s = 0; s < ovBlock.getNumSamples(); ++s)
         {
-            if (s % crusherBitRate != 0)
+            auto input = data[s];
+            auto crusher = pow(2, crusherBitDepth);
+            auto crushedData = floor(crusher * input) / crusher;
+
+            data[s] = (crushedData * crusherMix) + (input * (1 - crusherMix));
+
+            if (crusherBitRate > 1)
             {
-                auto redux = channelOutput[s - s % crusherBitRate];
-                channelOutput[s] = (redux * crusherMix) + (input * (1 - crusherMix));
+                if (s % crusherBitRate != 0)
+                {
+                    auto redux = data[s - s % crusherBitRate];
+                    data[s] = (redux * crusherMix) + (input * (1 - crusherMix));
+                }
             }
         }
     }
 
-    if (channel == 0)
-    {
-        outGain.setGainDecibels(crusherOutGain);
-        outGain.process(context);
-    }
+    overSamplers[ovRate].processSamplesDown(context.getOutputBlock());
+
+    outGain.setGainDecibels(crusherOutGain);
+    outGain.process(context);
 }
 
 void BitCrusher::updateParams(bool bypass, int bitDepth, int bitRate, float inGain, float outGain, float mix)

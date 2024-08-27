@@ -21,37 +21,37 @@ void Saturation::prepareToPlay(juce::dsp::ProcessSpec& spec)
     outGain.setRampDurationSeconds(.05);
 }
 
-void Saturation::process(juce::dsp::AudioBlock<float>& block, int channel)
+void Saturation::process(juce::dsp::ProcessContextReplacing<float>& context, int ovRate, std::array<juce::dsp::Oversampling<float>, 4>& overSamplers)
 {
     if (satBypass) { return; };
 
-    auto context = juce::dsp::ProcessContextReplacing<float>(block);
-    
-    auto channelInput = context.getInputBlock().getChannelPointer(channel);
-    auto channelOutput = context.getOutputBlock().getChannelPointer(channel);
+    inGain.setGainDecibels(satInGain);
+    inGain.process(context);
 
-    if(channel == 0)
-    {
-        inGain.setGainDecibels(satInGain);
-        inGain.process(context);
-    }
+    auto ovBlock = overSamplers[ovRate].processSamplesUp(context.getInputBlock());
 
-    for (int s = 0; s < context.getInputBlock().getNumSamples(); s++)
+    for (int channel = 0; channel < ovBlock.getNumChannels(); channel++)
     {
-        if (channelInput[s] != 0)
+        auto data = ovBlock.getChannelPointer(channel);
+
+        for (int s = 0; s < ovBlock.getNumSamples(); s++)
         {
-            auto power = pow(channelInput[s], 2) / abs(channelInput[s]) * satDrive;
-            auto distort = (channelInput[s] / abs(channelInput[s])) * (1 - std::exp(-power));
-            channelOutput[s] = distort * satMix + ((1 - satMix) * channelInput[s]);
+            if (data[s] != 0)
+            {
+                auto power = pow(data[s], 2) / abs(data[s]) * satDrive;
+                auto distort = (data[s] / abs(data[s])) * (1 - std::exp(-power));
+                data[s] = distort * satMix + ((1 - satMix) * data[s]);
+            }
+
         }
-        
+
     }
 
-    if (channel == 0)
-    {
-        outGain.setGainDecibels(satOutGain);
-        outGain.process(context);
-    }
+    overSamplers[ovRate].processSamplesDown(context.getOutputBlock());
+
+    outGain.setGainDecibels(satOutGain);
+    outGain.process(context);
+
 }
 
 void Saturation::updateParams(bool bypass, float drive, float inGain, float outGain, float mix)
