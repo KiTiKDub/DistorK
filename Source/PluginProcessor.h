@@ -107,10 +107,6 @@ private:
 
     std::vector<int> distortionProcessOrder{ 1, 2, 3, 4 };
 
-    //Todo
-    //Get waveShaper working
-        //Add in mix functionality
-
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DistorKAudioProcessor)
 };

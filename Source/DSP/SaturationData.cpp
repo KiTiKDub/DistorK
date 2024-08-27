@@ -26,7 +26,7 @@ void Saturation::process(juce::dsp::AudioBlock<float>& block, int channel)
     if (satBypass) { return; };
 
     auto context = juce::dsp::ProcessContextReplacing<float>(block);
-
+    
     auto channelInput = context.getInputBlock().getChannelPointer(channel);
     auto channelOutput = context.getOutputBlock().getChannelPointer(channel);
 
