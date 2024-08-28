@@ -151,36 +151,7 @@ void DistorKAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     masterOut.prepare(spec);
     masterOut.setRampDurationSeconds(.05);
 
-    //distorkEngine.prepareToPlay(spec);
-    bitcrusher.prepareToPlay(spec);
-    clipper.prepareToPlay(spec);
-    saturation.prepareToPlay(spec);
-    waveshaper.prepareToPlay(spec);
-
-    satIn.reset();
-    satIn.prepare(spec);
-    satIn.setRampDurationSeconds(.05);
-    satOut.reset();
-    satOut.prepare(spec);
-    satOut.setRampDurationSeconds(.05);
-    clipperIn.reset();
-    clipperIn.prepare(spec);
-    clipperIn.setRampDurationSeconds(.05);
-    clipperOut.reset();
-    clipperOut.prepare(spec);
-    clipperOut.setRampDurationSeconds(.05);
-    bitCrusherIn.reset();
-    bitCrusherIn.prepare(spec);
-    bitCrusherIn.setRampDurationSeconds(.05);
-    bitCrusherOut.reset();
-    bitCrusherOut.prepare(spec);
-    bitCrusherOut.setRampDurationSeconds(.05);
-    waveShaperIn.reset();
-    waveShaperIn.prepare(spec);
-    waveShaperIn.setRampDurationSeconds(.05);
-    waveShaperOut.reset();
-    waveShaperOut.prepare(spec);
-    waveShaperOut.setRampDurationSeconds(.05);
+    distorkEngine.prepareToPlay(spec);
 
     for (auto& oversample : overSamplers)
     {
@@ -245,8 +216,11 @@ void DistorKAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
     levelMeterData.process(true, 1, buffer);
 
     auto ovRate = overSampleSelect->get();
+    auto ovBlock = overSamplers[ovRate].processSamplesUp(inputContext.getInputBlock());
 
-    distorkEngine.process(inputContext, distortionProcessOrder, ovRate, overSamplers);
+    distorkEngine.process(ovBlock, distortionProcessOrder);
+
+    overSamplers[ovRate].processSamplesDown(inputContext.getOutputBlock());
 
     masterOut.setGainDecibels(masterOutValue->get());
     masterOut.process(inputContext);

@@ -13,7 +13,7 @@
 struct WaveShaper 
 {
     void prepareToPlay(juce::dsp::ProcessSpec& spec);
-    void process(juce::dsp::ProcessContextReplacing<float>& context, int ovRate, std::array<juce::dsp::Oversampling<float>, 4>& oversampelers);
+    void process(juce::dsp::AudioBlock<float>& block);
     void updateParams(bool bypass, int typeSelect, std::vector<juce::AudioParameterFloat*>& factors, float inGain, float outGain, float mix);
 
 private:

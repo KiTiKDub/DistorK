@@ -18,7 +18,7 @@ void DistorkEngine::prepareToPlay(juce::dsp::ProcessSpec& spec)
     bitcrusher.prepareToPlay(spec);
 }
 
-void DistorkEngine::process(juce::dsp::ProcessContextReplacing<float>& context, std::vector<int> distortionProcessOrder, int ovRate, std::array<juce::dsp::Oversampling<float>, 4>& overSamplers)
+void DistorkEngine::process(juce::dsp::AudioBlock<float>& block, std::vector<int>& distortionProcessOrder)
 {
     if (engineToggle->get()) { return; }
 
@@ -27,13 +27,13 @@ void DistorkEngine::process(juce::dsp::ProcessContextReplacing<float>& context, 
     for (int i = 0; i < distortionProcessOrder.size(); i++)
     {
         if (distortionProcessOrder[i] == 1)
-            saturator.process(context, ovRate, overSamplers);
+            saturator.process(block);
         else if (distortionProcessOrder[i] == 2)
-            clipper.process(context, ovRate, overSamplers);
+            clipper.process(block);
         else if (distortionProcessOrder[i] == 3)
-            waveshaper.process(context, ovRate, overSamplers);
+            waveshaper.process(block);
         else if (distortionProcessOrder[i] == 4)
-            bitcrusher.process(context, ovRate, overSamplers);
+            bitcrusher.process(block);
     }
 }
 

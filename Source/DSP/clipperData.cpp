@@ -21,20 +21,25 @@ void Clipper::prepareToPlay(juce::dsp::ProcessSpec& spec)
     outGain.setRampDurationSeconds(.05);
 }
 
-void Clipper::process(juce::dsp::ProcessContextReplacing<float>& context, int ovRate, std::array<juce::dsp::Oversampling<float>, 4>& overSamplers)
+void Clipper::process(juce::dsp::AudioBlock<float>& block)
 {
     if (clipperBypass) { return; };
 
-    inGain.setGainDecibels(clipperGainIn);
-    inGain.process(context);
+    /*inGain.setGainDecibels(clipperGainIn);
+    inGain.process(context)*/;
     
-    auto ovBlock = overSamplers[ovRate].processSamplesUp(context.getInputBlock());
-    auto len = ovBlock.getNumSamples();
+    //auto ovBlock = overSamplers[ovRate].processSamplesUp(context.getInputBlock());
+    auto len = block.getNumSamples();
 
 
-    for (int channel = 0; channel < ovBlock.getNumChannels(); channel++)
+    for (int channel = 0; channel < block.getNumChannels(); channel++)
     {
-        auto data = ovBlock.getChannelPointer(channel);
+        auto data = block.getChannelPointer(channel);
+
+        for (int s = 0; s < len; s++) //In Gain
+        {
+            data[s] *= juce::Decibels::decibelsToGain(clipperGainIn);
+        }
 
         switch (clipperMode)
         {
@@ -120,12 +125,17 @@ void Clipper::process(juce::dsp::ProcessContextReplacing<float>& context, int ov
             }
             break;
         }
+
+        for (int s = 0; s < len; s++) //out Gain
+        {
+            data[s] *= juce::Decibels::decibelsToGain(clipperGainOut);
+        }
     }
 
-    overSamplers[ovRate].processSamplesDown(context.getOutputBlock());
+    //overSamplers[ovRate].processSamplesDown(context.getOutputBlock());
 
-    outGain.setGainDecibels(clipperGainOut);
-    outGain.process(context);
+    /*outGain.setGainDecibels(clipperGainOut);
+    outGain.process(context);*/
 }
 
 void Clipper::updateParams(bool bypass, int mode, float threshold, float gainIn, float gainOut, float mix)

@@ -21,20 +21,25 @@ void Saturation::prepareToPlay(juce::dsp::ProcessSpec& spec)
     outGain.setRampDurationSeconds(.05);
 }
 
-void Saturation::process(juce::dsp::ProcessContextReplacing<float>& context, int ovRate, std::array<juce::dsp::Oversampling<float>, 4>& overSamplers)
+void Saturation::process(juce::dsp::AudioBlock<float>& block)
 {
     if (satBypass) { return; };
 
-    inGain.setGainDecibels(satInGain);
-    inGain.process(context);
+    /*inGain.setGainDecibels(satInGain);
+    inGain.process(context);*/
 
-    auto ovBlock = overSamplers[ovRate].processSamplesUp(context.getInputBlock());
+    //auto ovBlock = overSamplers[ovRate].processSamplesUp(context.getInputBlock());
 
-    for (int channel = 0; channel < ovBlock.getNumChannels(); channel++)
+    for (int channel = 0; channel < block.getNumChannels(); channel++)
     {
-        auto data = ovBlock.getChannelPointer(channel);
+        auto data = block.getChannelPointer(channel);
 
-        for (int s = 0; s < ovBlock.getNumSamples(); s++)
+        for (int s = 0; s < block.getNumSamples(); s++) //In Gain
+        {
+            data[s] *= juce::Decibels::decibelsToGain(satInGain);
+        }
+
+        for (int s = 0; s < block.getNumSamples(); s++)
         {
             if (data[s] != 0)
             {
@@ -47,10 +52,10 @@ void Saturation::process(juce::dsp::ProcessContextReplacing<float>& context, int
 
     }
 
-    overSamplers[ovRate].processSamplesDown(context.getOutputBlock());
+    //overSamplers[ovRate].processSamplesDown(context.getOutputBlock());
 
-    outGain.setGainDecibels(satOutGain);
-    outGain.process(context);
+    /*outGain.setGainDecibels(satOutGain);
+    outGain.process(context);*/
 
 }
 

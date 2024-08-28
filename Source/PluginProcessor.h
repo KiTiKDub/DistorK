@@ -70,10 +70,10 @@ public:
 
 private:
 
-    Clipper clipper;
+    /*Clipper clipper;
     BitCrusher bitcrusher;
     WaveShaper waveshaper;
-    Saturation saturation;
+    Saturation saturation;*/
 
     DistorkEngine distorkEngine;
 
@@ -90,16 +90,6 @@ private:
     //Master DSP & Params
     juce::dsp::Gain<float> masterIn;
     juce::dsp::Gain<float> masterOut;
-
-    juce::dsp::Gain<float> bitCrusherIn;
-    juce::dsp::Gain<float> bitCrusherOut;
-    juce::dsp::Gain<float> clipperIn;
-    juce::dsp::Gain<float> clipperOut;
-    juce::dsp::Gain<float> satIn;
-    juce::dsp::Gain<float> satOut;
-    juce::dsp::Gain<float> waveShaperIn;
-    juce::dsp::Gain<float> waveShaperOut;
-
     
     juce::AudioParameterBool* globalBypass{ nullptr };
     juce::AudioParameterBool* selectClip{ nullptr };

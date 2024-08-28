@@ -14,7 +14,7 @@
 struct Saturation
 {
     void prepareToPlay(juce::dsp::ProcessSpec& spec);
-    void process(juce::dsp::ProcessContextReplacing<float>& block, int ovRate, std::array<juce::dsp::Oversampling<float>, 4>& oversampelers);
+    void process(juce::dsp::AudioBlock<float>& block);
     void updateParams(bool bypass, float drive, float inGain, float outGain, float mix);
 
 private:

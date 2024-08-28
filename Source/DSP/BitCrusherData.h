@@ -14,7 +14,7 @@
 struct BitCrusher
 {
     void prepareToPlay(juce::dsp::ProcessSpec& spec);
-    void process(juce::dsp::ProcessContextReplacing<float>& context, int ovRate, std::array<juce::dsp::Oversampling<float>, 4>& oversampelers);
+    void process(juce::dsp::AudioBlock<float>& block);
     void updateParams(bool bypass, int bitDepth, int bitRate, float inGain, float outGain, float mix);
 
 private:
