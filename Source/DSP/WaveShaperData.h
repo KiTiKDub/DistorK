@@ -10,6 +10,8 @@
 
 #pragma once
 #include <JuceHeader.h>
+#include "../Utility/overSampleGain.h"
+
 struct WaveShaper 
 {
     void prepareToPlay(juce::dsp::ProcessSpec& spec);
@@ -30,8 +32,7 @@ private:
         GloubiBoulga
     };
 
-    juce::dsp::Gain<float> inGain;
-    juce::dsp::Gain<float> outGain;
+    overSampleGain osg;
 
     bool waveShaperBypass;
     int waveShaperTypeSelect;

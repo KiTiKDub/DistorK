@@ -12,26 +12,16 @@
 
 void WaveShaper::prepareToPlay(juce::dsp::ProcessSpec& spec)
 {
-    inGain.reset();
-    inGain.prepare(spec);
-    inGain.setRampDurationSeconds(.05);
-
-    outGain.reset();
-    outGain.prepare(spec);
-    outGain.setRampDurationSeconds(.05);
 }
 
 void WaveShaper::process(juce::dsp::AudioBlock<float>& block)
 {
     if (waveShaperBypass) { return; };
 
-    /*inGain.setGainDecibels(waveShaperInGainValue);
-    inGain.process(context);*/
-
-    //auto ovBlock = overSamplers[ovRate].processSamplesUp(context.getInputBlock());
-
     for (int channel = 0; channel < block.getNumChannels(); channel++)
     {
+        osg.process(block, waveShaperInGainValue, channel);
+
         switch (waveShaperTypeSelect)
         {
         case WaveShaper::sinusoidal:
@@ -51,12 +41,9 @@ void WaveShaper::process(juce::dsp::AudioBlock<float>& block)
             break;
         }
 
+        osg.process(block, waveShaperOutGainValue, channel);
     }
 
-    //overSamplers[ovRate].processSamplesDown(context.getOutputBlock());
-
-    /*outGain.setGainDecibels(waveShaperOutGainValue);
-    outGain.process(context);*/
 }
 
 void WaveShaper::updateParams(bool bypass, int typeSelect, std::vector<juce::AudioParameterFloat*>& factors, float inGain, float outGain, float mix)
@@ -79,11 +66,6 @@ void WaveShaper::processSinusoidal(int channel, juce::dsp::AudioBlock<float>& bl
 
     auto data = block.getChannelPointer(channel);
 
-    for (int s = 0; s < block.getNumSamples(); s++) //In Gain
-    {
-        data[s] *= juce::Decibels::decibelsToGain(waveShaperInGainValue);
-    }
-
     for (int s = 0; s < block.getNumSamples(); ++s)
     {
         if (data[s] > b)
@@ -94,12 +76,6 @@ void WaveShaper::processSinusoidal(int channel, juce::dsp::AudioBlock<float>& bl
         {
             data[s] = ((sin(z * data[s]) * a) * waveshaperMix) + (data[s] * (1 - waveshaperMix));
         }
-
-    }
-
-    for (int s = 0; s < block.getNumSamples(); s++) //out Gain
-    {
-        data[s] *= juce::Decibels::decibelsToGain(waveShaperOutGainValue);
     }
 }
 
@@ -109,10 +85,6 @@ void WaveShaper::processQuadratic(int channel, juce::dsp::AudioBlock<float>& blo
 
     auto data = block.getChannelPointer(channel);
 
-    for (int s = 0; s < block.getNumSamples(); s++) //In Gain
-    {
-        data[s] *= juce::Decibels::decibelsToGain(waveShaperInGainValue);
-    }
 
     for (int s = 0; s < block.getNumSamples(); ++s)
     {
@@ -120,10 +92,6 @@ void WaveShaper::processQuadratic(int channel, juce::dsp::AudioBlock<float>& blo
         data[s] = (shape * waveshaperMix) + (data[s] * (1-waveshaperMix));
     }
 
-    for (int s = 0; s < block.getNumSamples(); s++) //Out Gain
-    {
-        data[s] *= juce::Decibels::decibelsToGain(waveShaperOutGainValue);
-    }
 }
 
 void WaveShaper::processFactor(int channel, juce::dsp::AudioBlock<float>& block)
@@ -133,20 +101,10 @@ void WaveShaper::processFactor(int channel, juce::dsp::AudioBlock<float>& block)
 
     auto data = block.getChannelPointer(channel);
 
-    for (int s = 0; s < block.getNumSamples(); s++) //In Gain
-    {
-        data[s] *= juce::Decibels::decibelsToGain(waveShaperInGainValue);
-    }
-
     for (int s = 0; s < block.getNumSamples(); ++s)
     {
         auto shape = ((1 + factor) * data[s]) / (1 + factor * abs(data[s]));
         data[s] = (shape * waveshaperMix) + (data[s] * (1 - waveshaperMix));
-    }
-
-    for (int s = 0; s < block.getNumSamples(); s++) //Out Gain
-    {
-        data[s] *= juce::Decibels::decibelsToGain(waveShaperOutGainValue);
     }
 }
 
@@ -156,11 +114,6 @@ void WaveShaper::processGB(int channel, juce::dsp::AudioBlock<float>& block)
 
     auto data = block.getChannelPointer(channel);
 
-    for (int s = 0; s < block.getNumSamples(); s++) //In Gain
-    {
-        data[s] *= juce::Decibels::decibelsToGain(waveShaperInGainValue);
-    }
-
     for (int s = 0; s < block.getNumSamples(); ++s)
     {
         auto distort = data[s] * factor;
@@ -168,10 +121,5 @@ void WaveShaper::processGB(int channel, juce::dsp::AudioBlock<float>& block)
 
         auto shape = (exp(distort) - exp(-distort * constant)) / (exp(distort) + exp(-distort));
         data[s] = (shape * waveshaperMix) + (data[s] * (1 - waveshaperMix));
-    }
-
-    for (int s = 0; s < block.getNumSamples(); s++) //out Gain
-    {
-        data[s] *= juce::Decibels::decibelsToGain(waveShaperOutGainValue);
     }
 }

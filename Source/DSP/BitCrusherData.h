@@ -10,6 +10,7 @@
 
 #pragma once
 #include <JuceHeader.h>
+#include "../Utility/overSampleGain.h"
 
 struct BitCrusher
 {
@@ -19,8 +20,7 @@ struct BitCrusher
 
 private:
     
-    juce::dsp::Gain<float> inGain;
-    juce::dsp::Gain<float> outGain;
+    overSampleGain osg;
 
     bool crusherBypass;
     int crusherBitDepth;

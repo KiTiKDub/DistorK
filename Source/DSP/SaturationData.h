@@ -10,6 +10,7 @@
 
 #pragma once
 #include <JuceHeader.h>
+#include "../Utility/overSampleGain.h"
 
 struct Saturation
 {
@@ -19,8 +20,7 @@ struct Saturation
 
 private:
 
-    juce::dsp::Gain<float> inGain;
-    juce::dsp::Gain<float> outGain;
+    overSampleGain osg;
 
     bool satBypass;
     float satDrive;
