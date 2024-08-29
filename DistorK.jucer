@@ -13,6 +13,10 @@
         <FILE id="se9YaF" name="KitikToolbar.cpp" compile="1" resource="0"
               file="Source/Utility/KitikToolbar.cpp"/>
         <FILE id="fD0501" name="KitikToolbar.h" compile="0" resource="0" file="Source/Utility/KitikToolbar.h"/>
+        <FILE id="tsq8QB" name="overSampleGain.cpp" compile="1" resource="0"
+              file="Source/Utility/overSampleGain.cpp"/>
+        <FILE id="LNmmWT" name="overSampleGain.h" compile="0" resource="0"
+              file="Source/Utility/overSampleGain.h"/>
       </GROUP>
       <GROUP id="{73268F9D-75C4-DBFD-0DF0-7357DA84ADA1}" name="GUI">
         <FILE id="ysqgDx" name="BitCrusher.cpp" compile="1" resource="0" file="Source/GUI/BitCrusher.cpp"/>

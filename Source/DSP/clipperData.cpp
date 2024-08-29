@@ -12,121 +12,45 @@
 
 void Clipper::prepareToPlay(juce::dsp::ProcessSpec& spec)
 {
-    inGain.reset();
-    inGain.prepare(spec);
-    inGain.setRampDurationSeconds(.05);
-
-    outGain.reset();
-    outGain.prepare(spec);
-    outGain.setRampDurationSeconds(.05);
+    //I guess I don't need these anymore...
 }
 
-void Clipper::process(juce::dsp::AudioBlock<float>& block, int channel)
+void Clipper::process(juce::dsp::AudioBlock<float>& block)
 {
     if (clipperBypass) { return; };
 
-    auto context = juce::dsp::ProcessContextReplacing<float>(block);
-
-    if (channel == 0)
+    for (int channel = 0; channel < block.getNumChannels(); channel++)
     {
-        inGain.setGainDecibels(clipperGainIn);
-        inGain.process(context);
-    }
+        osg.process(block, clipperGainIn, channel);
 
-    auto* channelInput = context.getInputBlock().getChannelPointer(channel);
-    auto* channelOutput = context.getOutputBlock().getChannelPointer(channel);
-
-    auto len = context.getInputBlock().getNumSamples();
-
-    switch (clipperMode)
-    {
-    case Clipper::hardClipper:
-        for (int s = 0; s < len; ++s)
+        switch (clipperMode)
         {
-            auto gain = juce::Decibels::decibelsToGain(clipperThresh);
-            auto drySignal = channelInput[s];
-            channelInput[s] > gain ? channelOutput[s] = (gain * clipperMix) + drySignal * (1 - clipperMix) : channelOutput[s] = channelInput[s];
-            channelInput[s] < -gain ? channelOutput[s] = (-gain * clipperMix) + drySignal * (1 - clipperMix) : channelOutput[s] = channelInput[s];
+        case Clipper::hardClipper:
+            processHardClipper(channel, block);
+            break;
+
+        case Clipper::cubic:
+            processCubic(channel, block);
+            break;
+
+        case Clipper::sin:
+            processSin(channel, block);
+            break;
+
+        case Clipper::hTangent:
+            processHyperTangent(channel, block);
+            break;
+
+        case Clipper::arcTangent:
+            processArcTangent(channel, block);
+            break;
+
+        case Clipper::quintic:
+            processQuintic(channel, block);
+            break;
         }
-        break;
 
-    case Clipper::cubic:
-        for (int s = 0; s < len; s++)
-        {
-
-            auto newLimit = juce::Decibels::decibelsToGain(clipperThresh);
-            auto drySignal = channelInput[s];
-            auto inverse = 1 / newLimit;
-            auto resizeSamples = channelInput[s] * inverse;
-            resizeSamples > 1 ? resizeSamples = 1 : resizeSamples = resizeSamples;
-            resizeSamples < -1 ? resizeSamples = -1 : resizeSamples = resizeSamples;
-            auto cubic = (resizeSamples - pow(resizeSamples, 3) / 3);
-            channelOutput[s] = (cubic * newLimit * clipperMix) + (drySignal * (1 - clipperMix));
-        }
-        break;
-
-    case Clipper::sin:
-        for (int s = 0; s < len; ++s)
-        {
-            auto newLimit = juce::Decibels::decibelsToGain(clipperThresh);
-            auto drySignal = channelInput[s];
-            auto inverse = 1 / newLimit;
-            auto resizeSamples = channelInput[s] * inverse;
-            resizeSamples > 1 ? resizeSamples = 1 : resizeSamples = resizeSamples;
-            resizeSamples < -1 ? resizeSamples = -1 : resizeSamples = resizeSamples;
-            auto sinosidal = std::sin(1 * juce::MathConstants<float>::pi * resizeSamples / 3);
-
-            channelOutput[s] = (sinosidal * newLimit * clipperMix) + (drySignal * (1 - clipperMix));
-        }
-        break;
-
-    case Clipper::hTangent:
-        for (int s = 0; s < len; s++)
-        {
-            auto newLimit = juce::Decibels::decibelsToGain(clipperThresh);
-            auto drySignal = channelInput[s];
-            auto inverse = 1 / newLimit;
-            auto resizeSamples = channelInput[s] * inverse;
-            resizeSamples > 1 ? resizeSamples = 1 : resizeSamples = resizeSamples;
-            resizeSamples < -1 ? resizeSamples = -1 : resizeSamples = resizeSamples;
-            auto hyperTan = tanh(resizeSamples);
-            channelOutput[s] = (hyperTan * newLimit * clipperMix) + (drySignal * (1 - clipperMix));
-        }
-        break;
-
-    case Clipper::arcTangent:
-        for (int s = 0; s < len; ++s)
-        {
-            auto newLimit = juce::Decibels::decibelsToGain(clipperThresh);
-            auto drySignal = channelInput[s];
-            auto inverse = 1 / newLimit;
-            auto resizeSamples = channelInput[s] * inverse;
-            resizeSamples > 1 ? resizeSamples = 1 : resizeSamples = resizeSamples;
-            resizeSamples < -1 ? resizeSamples = -1 : resizeSamples = resizeSamples;
-            auto arcTan = atan(resizeSamples * juce::MathConstants<float>::pi /2) * (2/ juce::MathConstants<float>::pi);
-            channelOutput[s] = (arcTan * newLimit * clipperMix) + (drySignal * (1 - clipperMix));
-        }
-        break;
-
-    case Clipper::quintic:
-        for (int s = 0; s < len; ++s)
-        {
-            auto newLimit = juce::Decibels::decibelsToGain(clipperThresh);
-            auto drySignal = channelInput[s];
-            auto inverse = 1 / newLimit;
-            auto resizeSamples = channelInput[s] * inverse;
-            resizeSamples > 1 ? resizeSamples = 1 : resizeSamples = resizeSamples;
-            resizeSamples < -1 ? resizeSamples = -1 : resizeSamples = resizeSamples;
-            auto quintic = resizeSamples - pow(resizeSamples, 5) / 5;
-            channelOutput[s] = (quintic * newLimit * clipperMix) + (drySignal * (1 - clipperMix));
-        }
-        break;
-    }
-
-    if (channel == 0)
-    {
-        outGain.setGainDecibels(clipperGainOut);
-        outGain.process(context);
+        osg.process(block, clipperGainOut, channel);
     }
 
 }
@@ -139,4 +63,103 @@ void Clipper::updateParams(bool bypass, int mode, float threshold, float gainIn,
     clipperGainIn = gainIn;
     clipperGainOut = gainOut;
     clipperMix = mix/100;
+}
+
+void Clipper::processHardClipper(int channel, juce::dsp::AudioBlock<float>& block)
+{
+    auto data = block.getChannelPointer(channel);
+
+    for (int s = 0; s < block.getNumSamples(); ++s)
+    {
+        auto gain = juce::Decibels::decibelsToGain(clipperThresh);
+        auto drySignal = data[s];
+        data[s] > gain ? data[s] = (gain * clipperMix) + drySignal * (1 - clipperMix) : data[s] = data[s];
+        data[s] < -gain ? data[s] = (-gain * clipperMix) + drySignal * (1 - clipperMix) : data[s] = data[s];
+    }
+}
+
+void Clipper::processCubic(int channel, juce::dsp::AudioBlock<float>& block)
+{
+    auto data = block.getChannelPointer(channel);
+
+    for (int s = 0; s < block.getNumSamples(); s++)
+    {
+        auto newLimit = juce::Decibels::decibelsToGain(clipperThresh);
+        auto drySignal = data[s];
+        auto inverse = 1 / newLimit;
+        auto resizeSamples = data[s] * inverse;
+        resizeSamples > 1 ? resizeSamples = 1 : resizeSamples = resizeSamples;
+        resizeSamples < -1 ? resizeSamples = -1 : resizeSamples = resizeSamples;
+        auto cubic = (resizeSamples - pow(resizeSamples, 3) / 3);
+        data[s] = (cubic * newLimit * clipperMix) + (drySignal * (1 - clipperMix));
+    }
+}
+
+void Clipper::processSin(int channel, juce::dsp::AudioBlock<float>& block)
+{
+    auto data = block.getChannelPointer(channel);
+
+    for (int s = 0; s < block.getNumSamples(); ++s)
+    {
+        auto newLimit = juce::Decibels::decibelsToGain(clipperThresh);
+        auto drySignal = data[s];
+        auto inverse = 1 / newLimit;
+        auto resizeSamples = data[s] * inverse;
+        resizeSamples > 1 ? resizeSamples = 1 : resizeSamples = resizeSamples;
+        resizeSamples < -1 ? resizeSamples = -1 : resizeSamples = resizeSamples;
+        auto sinosidal = std::sin(1 * juce::MathConstants<float>::pi * resizeSamples / 3);
+
+        data[s] = (sinosidal * newLimit * clipperMix) + (drySignal * (1 - clipperMix));
+    }
+}
+
+void Clipper::processHyperTangent(int channel, juce::dsp::AudioBlock<float>& block)
+{
+    auto data = block.getChannelPointer(channel);
+
+    for (int s = 0; s < block.getNumSamples(); s++)
+    {
+        auto newLimit = juce::Decibels::decibelsToGain(clipperThresh);
+        auto drySignal = data[s];
+        auto inverse = 1 / newLimit;
+        auto resizeSamples = data[s] * inverse;
+        resizeSamples > 1 ? resizeSamples = 1 : resizeSamples = resizeSamples;
+        resizeSamples < -1 ? resizeSamples = -1 : resizeSamples = resizeSamples;
+        auto hyperTan = tanh(resizeSamples);
+        data[s] = (hyperTan * newLimit * clipperMix) + (drySignal * (1 - clipperMix));
+    }
+}
+
+void Clipper::processArcTangent(int channel, juce::dsp::AudioBlock<float>& block)
+{
+    auto data = block.getChannelPointer(channel);
+
+    for (int s = 0; s < block.getNumSamples(); ++s)
+    {
+        auto newLimit = juce::Decibels::decibelsToGain(clipperThresh);
+        auto drySignal = data[s];
+        auto inverse = 1 / newLimit;
+        auto resizeSamples = data[s] * inverse;
+        resizeSamples > 1 ? resizeSamples = 1 : resizeSamples = resizeSamples;
+        resizeSamples < -1 ? resizeSamples = -1 : resizeSamples = resizeSamples;
+        auto arcTan = atan(resizeSamples * juce::MathConstants<float>::pi / 2) * (2 / juce::MathConstants<float>::pi);
+        data[s] = (arcTan * newLimit * clipperMix) + (drySignal * (1 - clipperMix));
+    }
+}
+
+void Clipper::processQuintic(int channel, juce::dsp::AudioBlock<float>& block)
+{
+    auto data = block.getChannelPointer(channel);
+
+    for (int s = 0; s < block.getNumSamples(); ++s)
+    {
+        auto newLimit = juce::Decibels::decibelsToGain(clipperThresh);
+        auto drySignal = data[s];
+        auto inverse = 1 / newLimit;
+        auto resizeSamples = data[s] * inverse;
+        resizeSamples > 1 ? resizeSamples = 1 : resizeSamples = resizeSamples;
+        resizeSamples < -1 ? resizeSamples = -1 : resizeSamples = resizeSamples;
+        auto quintic = resizeSamples - pow(resizeSamples, 5) / 5;
+        data[s] = (quintic * newLimit * clipperMix) + (drySignal * (1 - clipperMix));
+    }
 }

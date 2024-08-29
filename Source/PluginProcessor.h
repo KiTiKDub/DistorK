@@ -70,10 +70,10 @@ public:
 
 private:
 
-    Clipper clipper;
+    /*Clipper clipper;
     BitCrusher bitcrusher;
     WaveShaper waveshaper;
-    Saturation saturation;
+    Saturation saturation;*/
 
     DistorkEngine distorkEngine;
 

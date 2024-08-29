@@ -12,52 +12,37 @@
 
 void BitCrusher::prepareToPlay(juce::dsp::ProcessSpec& spec)
 {
-    inGain.reset();
-    inGain.prepare(spec);
-    inGain.setRampDurationSeconds(.05);
-
-    outGain.reset();
-    outGain.prepare(spec);
-    outGain.setRampDurationSeconds(.05);
 }
 
-void BitCrusher::process(juce::dsp::AudioBlock<float>& block, int channel)
+void BitCrusher::process(juce::dsp::AudioBlock<float>& block)
 {
     if (crusherBypass) { return; };
 
-    auto context = juce::dsp::ProcessContextReplacing<float>(block);
-
-    auto channelInput = context.getInputBlock().getChannelPointer(channel);
-    auto channelOutput = context.getOutputBlock().getChannelPointer(channel);
-
-    if (channel == 0)
+    for (int channel = 0; channel < block.getNumChannels(); channel++)
     {
-        inGain.setGainDecibels(crusherInGain);
-        inGain.process(context);
-    }
+        osg.process(block, crusherInGain, channel);
 
-    for (int s = 0; s < context.getInputBlock().getNumSamples(); ++s)
-    {
-        auto input = channelInput[s];
-        auto crusher = pow(2, crusherBitDepth);
-        auto crushedData = floor(crusher * input) / crusher;
+        auto data = block.getChannelPointer(channel);
 
-        channelOutput[s] = (crushedData * crusherMix) + (input * (1 - crusherMix));
-
-        if (crusherBitRate > 1)
+        for (int s = 0; s < block.getNumSamples(); ++s)
         {
-            if (s % crusherBitRate != 0)
+            auto input = data[s];
+            auto crusher = pow(2, crusherBitDepth);
+            auto crushedData = floor(crusher * input) / crusher;
+
+            data[s] = (crushedData * crusherMix) + (input * (1 - crusherMix));
+
+            if (crusherBitRate > 1)
             {
-                auto redux = channelOutput[s - s % crusherBitRate];
-                channelOutput[s] = (redux * crusherMix) + (input * (1 - crusherMix));
+                if (s % crusherBitRate != 0)
+                {
+                    auto redux = data[s - s % crusherBitRate];
+                    data[s] = (redux * crusherMix) + (input * (1 - crusherMix));
+                }
             }
         }
-    }
 
-    if (channel == 0)
-    {
-        outGain.setGainDecibels(crusherOutGain);
-        outGain.process(context);
+        osg.process(block, crusherOutGain, channel);
     }
 }
 

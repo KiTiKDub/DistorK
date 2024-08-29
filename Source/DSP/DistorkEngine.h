@@ -21,7 +21,7 @@ struct DistorkEngine
     virtual ~DistorkEngine() {};
 
     void prepareToPlay(juce::dsp::ProcessSpec&);
-    void process(juce::dsp::AudioBlock<float>&, std::vector<int>, int);
+    void process(juce::dsp::AudioBlock<float>&, std::vector<int>&);
 
     juce::AudioParameterBool* engineToggle{ nullptr };
 

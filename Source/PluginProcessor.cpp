@@ -215,15 +215,10 @@ void DistorKAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
     levelMeterData.process(true, 0, buffer);
     levelMeterData.process(true, 1, buffer);
 
-    //over sample blocks
     auto ovRate = overSampleSelect->get();
-
     auto ovBlock = overSamplers[ovRate].processSamplesUp(inputContext.getInputBlock());
 
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        distorkEngine.process(ovBlock, distortionProcessOrder, channel);
-    }
+    distorkEngine.process(ovBlock, distortionProcessOrder);
 
     overSamplers[ovRate].processSamplesDown(inputContext.getOutputBlock());
 
