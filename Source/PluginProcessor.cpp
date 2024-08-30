@@ -293,42 +293,42 @@ juce::AudioProcessorValueTreeState::ParameterLayout DistorKAudioProcessor::creat
 
     //Clipper Controls
     auto threshRange = NormalisableRange<float>(-60, 0, .1, 1);
-    layout.add(std::make_unique<AudioParameterBool>("toggleClip", "Toggle Clip", false));
-    layout.add(std::make_unique<AudioParameterInt>("clipperSelect", "Clipper Type", 0, 5, 0));
-    layout.add(std::make_unique<AudioParameterFloat>("clipperThresh", "Threshold", threshRange, 0));
-    layout.add(std::make_unique<AudioParameterFloat>("clipperInGain", "In Gain", interGainRange, 0));
-    layout.add(std::make_unique<AudioParameterFloat>("clipperOutGain", "Out Gain", interGainRange, 0));
-    layout.add(std::make_unique<AudioParameterFloat>("clipperMix", "Dry/Wet", mixRange, 100));
+    layout.add(std::make_unique<AudioParameterBool>(juce::ParameterID{"toggleClip",1}, "Toggle Clip", false));
+    layout.add(std::make_unique<AudioParameterInt>(juce::ParameterID{"clipperSelect",1}, "Clipper Type", 0, 5, 0));
+    layout.add(std::make_unique<AudioParameterFloat>(juce::ParameterID{"clipperThresh",1}, "Threshold", threshRange, 0));
+    layout.add(std::make_unique<AudioParameterFloat>(juce::ParameterID{"clipperInGain",1}, "In Gain", interGainRange, 0));
+    layout.add(std::make_unique<AudioParameterFloat>(juce::ParameterID{"clipperOutGain",1}, "Out Gain", interGainRange, 0));
+    layout.add(std::make_unique<AudioParameterFloat>(juce::ParameterID{"clipperMix",1}, "Dry/Wet", mixRange, 100));
 
     //WaveShaper Controls
     auto lessThanOne = NormalisableRange<float>(.01, .99, .01, 1);
     auto sineFactor = NormalisableRange<float>(.05, .95, .01, 1);
     auto moreThanOne = NormalisableRange<float>(1, 10, .01, 1);
-    layout.add(std::make_unique<AudioParameterBool>("toggleWaveShpr", "Toggle WS", false));
-    layout.add(std::make_unique<AudioParameterInt>("waveShaperSelect", "Type", 0, 3, 0));
-    layout.add(std::make_unique<AudioParameterFloat>("waveShaperSin", "Drive", sineFactor, .05));
-    layout.add(std::make_unique<AudioParameterFloat>("waveShaperQuadratic", "Drive", moreThanOne, 1));
-    layout.add(std::make_unique<AudioParameterFloat>("waveShaperFactor", "Drive", lessThanOne, .05));
-    layout.add(std::make_unique<AudioParameterFloat>("waveShaperGB", "Drive", moreThanOne, 1));
-    layout.add(std::make_unique<AudioParameterFloat>("waveShaperInGain", "In Gain", interGainRange, 0));
-    layout.add(std::make_unique<AudioParameterFloat>("waveShaperOutGain", "Out Gain", interGainRange, 0));
-    layout.add(std::make_unique<AudioParameterFloat>("waveShaperMix", "Dry/Wet", mixRange, 100));
+    layout.add(std::make_unique<AudioParameterBool>(juce::ParameterID{"toggleWaveShpr",1}, "Toggle WS", false));
+    layout.add(std::make_unique<AudioParameterInt>(juce::ParameterID{"waveShaperSelect",1}, "Type", 0, 3, 0));
+    layout.add(std::make_unique<AudioParameterFloat>(juce::ParameterID{"waveShaperSin",1}, "Drive", sineFactor, .05));
+    layout.add(std::make_unique<AudioParameterFloat>(juce::ParameterID{"waveShaperQuadratic",1}, "Drive", moreThanOne, 1));
+    layout.add(std::make_unique<AudioParameterFloat>(juce::ParameterID{"waveShaperFactor",1}, "Drive", lessThanOne, .05));
+    layout.add(std::make_unique<AudioParameterFloat>(juce::ParameterID{"waveShaperGB",1}, "Drive", moreThanOne, 1));
+    layout.add(std::make_unique<AudioParameterFloat>(juce::ParameterID{"waveShaperInGain",1}, "In Gain", interGainRange, 0));
+    layout.add(std::make_unique<AudioParameterFloat>(juce::ParameterID{"waveShaperOutGain",1}, "Out Gain", interGainRange, 0));
+    layout.add(std::make_unique<AudioParameterFloat>(juce::ParameterID{"waveShaperMix",1}, "Dry/Wet", mixRange, 100));
 
     //BitCrusher Controls
-    layout.add(std::make_unique<AudioParameterBool>("toggleBit", "Toggle Bit", false));
-    layout.add(std::make_unique<AudioParameterInt>("crusherBitDepth", "Bit Depth", 1, 16, 16));
-    layout.add(std::make_unique<AudioParameterInt>("crusherBitRate", "Bit Rate", 1, 25, 1));
-    layout.add(std::make_unique<AudioParameterFloat>("crusherInGain", "In Gain", interGainRange, 0));
-    layout.add(std::make_unique<AudioParameterFloat>("crusherOutGain", "Out Gain", interGainRange, 0));
-    layout.add(std::make_unique<AudioParameterFloat>("crusherMix", "Dry/Wet", mixRange, 100));
+    layout.add(std::make_unique<AudioParameterBool>(juce::ParameterID{"toggleBit",1}, "Toggle Bit", false));
+    layout.add(std::make_unique<AudioParameterInt>(juce::ParameterID{"crusherBitDepth",1}, "Bit Depth", 1, 16, 16));
+    layout.add(std::make_unique<AudioParameterInt>(juce::ParameterID{"crusherBitRate",1}, "Bit Rate", 1, 25, 1));
+    layout.add(std::make_unique<AudioParameterFloat>(juce::ParameterID{"crusherInGain",1}, "In Gain", interGainRange, 0));
+    layout.add(std::make_unique<AudioParameterFloat>(juce::ParameterID{"crusherOutGain",1}, "Out Gain", interGainRange, 0));
+    layout.add(std::make_unique<AudioParameterFloat>(juce::ParameterID{"crusherMix",1}, "Dry/Wet", mixRange, 100));
 
     //Saturation Controls
     auto driveRange = NormalisableRange<float>(1, 10, .1, 1);
-    layout.add(std::make_unique<AudioParameterBool>("toggleSat", "Toggle Sat", false));
-    layout.add(std::make_unique<AudioParameterFloat>("satDrive", "Drive", driveRange, 1));
-    layout.add(std::make_unique<AudioParameterFloat>("satInGain", "In Gain", interGainRange, 0));
-    layout.add(std::make_unique<AudioParameterFloat>("satOutGain", "Out Gain", interGainRange, 0));
-    layout.add(std::make_unique<AudioParameterFloat>("satMix", "Dry/Wet", mixRange, 100));
+    layout.add(std::make_unique<AudioParameterBool>(juce::ParameterID{"toggleSat",1}, "Toggle Sat", false));
+    layout.add(std::make_unique<AudioParameterFloat>(juce::ParameterID{"satDrive",1}, "Drive", driveRange, 1));
+    layout.add(std::make_unique<AudioParameterFloat>(juce::ParameterID{"satInGain",1}, "In Gain", interGainRange, 0));
+    layout.add(std::make_unique<AudioParameterFloat>(juce::ParameterID{"satOutGain",1}, "Out Gain", interGainRange, 0));
+    layout.add(std::make_unique<AudioParameterFloat>(juce::ParameterID{"satMix",1}, "Dry/Wet", mixRange, 100));
 
     return layout;
 }
