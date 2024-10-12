@@ -45,9 +45,9 @@ void DistorKAudioProcessorEditor::paint (juce::Graphics& g)
     logoSpace.setY(bounds.getTopLeft().getY());
     logoSpace.translate(-25, -10);
 
-    //auto logo = juce::ImageCache::getFromMemory(BinaryData::KITIK_LOGO_NO_BKGD_png, BinaryData::KITIK_LOGO_NO_BKGD_pngSize);
+    auto logo = juce::ImageCache::getFromMemory(BinaryData::KITIK_LOGO_NO_BKGD_png, BinaryData::KITIK_LOGO_NO_BKGD_pngSize);
     g.setOpacity(.8);
-    //g.drawImage(logo, logoSpace.toFloat(), juce::RectanglePlacement::centred);
+    g.drawImage(logo, logoSpace.toFloat(), juce::RectanglePlacement::centred);
     g.setOpacity(1);
 
     g.setFont(15.0f);

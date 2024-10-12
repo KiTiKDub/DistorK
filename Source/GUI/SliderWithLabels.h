@@ -9,7 +9,8 @@
 */
 
 #pragma once
-#include <JuceHeader.h>
+#include <juce_gui_basics/juce_gui_basics.h>
+#include "juce_audio_processors/juce_audio_processors.h"
 
 struct SliderWithLabels : juce::Slider {
    SliderWithLabels(juce::RangedAudioParameter* rap, const juce::String title, const juce::Slider::SliderStyle style) :

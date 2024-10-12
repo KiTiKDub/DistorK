@@ -71,8 +71,8 @@ void MasterComp::paint(juce::Graphics& g)
     g.drawFittedText((juce::String)input, leftMetersbounds, juce::Justification::centredTop, 1);
     g.drawFittedText((juce::String)output, rightMetersBounds, juce::Justification::centredTop, 1);
     
-    //auto newFont = juce::Font(juce::Typeface::createSystemTypefaceFor(BinaryData::OFFSHORE_TTF, BinaryData::OFFSHORE_TTFSize));
-    //g.setFont(newFont);
+    auto newFont = juce::Font(juce::Typeface::createSystemTypefaceFor(BinaryData::offshore_ttf, BinaryData::offshore_ttfSize));
+    g.setFont(newFont);
     g.setFont(topBounds.getHeight() * .95);
     g.drawFittedText("DistorK", topBounds, juce::Justification::centred, 1);
 }
