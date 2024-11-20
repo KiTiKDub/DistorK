@@ -67,14 +67,9 @@ public:
 
     void setToolbarOrder(std::vector<int> tbOrder) { distortionProcessOrder = tbOrder; }
 
-    LevelMeterData levelMeterData;
+    LevelMeterData levelMeterData, zeroDbOutData;
 
 private:
-
-    /*Clipper clipper;
-    BitCrusher bitcrusher;
-    WaveShaper waveshaper;
-    Saturation saturation;*/
 
     DistorkEngine distorkEngine;
 

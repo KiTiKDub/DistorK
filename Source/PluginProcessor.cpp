@@ -222,6 +222,9 @@ void DistorKAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
 
     overSamplers[ovRate].processSamplesDown(inputContext.getOutputBlock());
 
+    zeroDbOutData.process(false, 0, buffer);
+    zeroDbOutData.process(false, 1, buffer);
+
     masterOut.setGainDecibels(masterOutValue->get());
     masterOut.process(inputContext);
  
@@ -239,7 +242,6 @@ void DistorKAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
 
     levelMeterData.process(false, 0, buffer);
     levelMeterData.process(false, 1, buffer);
-    
 }
 
 //==============================================================================
