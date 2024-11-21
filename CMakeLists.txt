@@ -11,7 +11,7 @@ endif()
 
 
 # Change to your project name
-project(DistorK VERSION 2.1.1)
+project(DistorK VERSION 2.2.1)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_XCODE_GENERATE_SCHEME OFF)
