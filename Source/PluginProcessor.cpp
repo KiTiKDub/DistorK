@@ -222,13 +222,7 @@ void DistorKAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
 
     overSamplers[ovRate].processSamplesDown(inputContext.getOutputBlock());
 
-    zeroDbOutData.process(false, 0, buffer);
-    zeroDbOutData.process(false, 1, buffer);
-
-    masterOut.setGainDecibels(masterOutValue->get());
-    masterOut.process(inputContext);
- 
-    //process master dry/wet
+    // process master dry/wet
     for (int ch = 0; ch < totalNumInputChannels; ++ch)
     {
         auto data = inputBlock.getChannelPointer(ch);
@@ -239,6 +233,12 @@ void DistorKAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
             data[s] = (data[s] * masterMix->get() / 100) + (dry[s] * (1 - masterMix->get() / 100));
         }
     }
+
+    zeroDbOutData.process(false, 0, buffer); //pass master mix data here to compensate for mix
+    zeroDbOutData.process(false, 1, buffer);
+
+    masterOut.setGainDecibels(masterOutValue->get());
+    masterOut.process(inputContext);
 
     levelMeterData.process(false, 0, buffer);
     levelMeterData.process(false, 1, buffer);

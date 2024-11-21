@@ -44,6 +44,16 @@ toggleSatAT(apvts, "bypassSat", toggleSat)
     addAndMakeVisible(toggleSat);
     toggleSat.setComponentID("Power");
 
+    comboSat.addItemList(strings, 0);
+    comboBit.addItemList(strings, 0);
+    comboClip.addItemList(strings, 0);
+    comboWaveShpr.addItemList(strings, 1);
+
+    comboSat.onChange = [this] {updateArrayOrder(comboSat.getComponentID(), comboSat.getSelectedItemIndex());};
+    comboBit.onChange = [this] { updateArrayOrder(comboBit.getComponentID(), comboBit.getSelectedItemIndex()); };
+    comboClip.onChange = [this] { updateArrayOrder(comboClip.getComponentID(), comboClip.getSelectedItemIndex()); };
+    comboWaveShpr.onChange = [this] { updateArrayOrder(comboWaveShpr.getComponentID(), comboWaveShpr.getSelectedItemIndex()); };
+
     selectClip.onClick = [this] { updateToggleState(&selectClip); };
     selectBit.onClick = [this] { updateToggleState(&selectBit); };
     selectWaveShpr.onClick = [this] { updateToggleState(&selectWaveShpr); };
@@ -111,4 +121,32 @@ void ToggleComp::attachRSWL(juce::AudioProcessorValueTreeState& apvts)
 void ToggleComp::updateToggleState(juce::Button* button)
 {
     auto state = button->getToggleState();
+}
+
+void ToggleComp::updateArrayOrder(juce::String distType, int selectedValue)
+{
+    if(distType == "Sat")
+    {
+        int temp = order[0];
+        order[0] = order[selectedValue - 1];
+        order[selectedValue - 1] = temp;
+    }
+    else if (distType == "Clip")
+    {
+        int temp = order[1];
+        order[1] = order[selectedValue - 1];
+        order[selectedValue - 1] = temp;
+    }
+    if (distType == "Wave")
+    {
+        int temp = order[2];
+        order[2] = order[selectedValue - 1];
+        order[selectedValue - 1] = temp;
+    }
+    if (distType == "Bit")
+    {
+        int temp = order[3];
+        order[3] = order[selectedValue - 1];
+        order[selectedValue - 1] = temp;
+    }
 }

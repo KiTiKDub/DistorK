@@ -25,6 +25,7 @@ private:
 
     void attachRSWL(juce::AudioProcessorValueTreeState& apvts);
     void updateToggleState(juce::Button* button);
+    void updateArrayOrder(juce::String distType, int selectedValue);
 
     std::unique_ptr<RotarySliderWithLabels> oversampleSelect;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> oversampleSelectAT;
@@ -33,6 +34,10 @@ private:
     juce::ToggleButton toggleClip, toggleBit, toggleWaveShpr, toggleSat;
     juce::AudioProcessorValueTreeState::ButtonAttachment selectClipAT, selectBitAT, selectWaveShprAT, selectSatAT;
     juce::AudioProcessorValueTreeState::ButtonAttachment toggleClipAT, toggleBitAT, toggleWaveShprAT, toggleSatAT;
+
+    juce::ComboBox comboClip, comboBit, comboWaveShpr, comboSat;
+    juce::StringArray strings{"1", "2", "3", "4"};
+    std::array<int,4> order{1,2,3,4};
 
     std::vector<juce::String> oversamplingText{ "1x", "2x", "4x", "8x" };
 };

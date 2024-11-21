@@ -116,11 +116,11 @@ void MasterComp::resized()
     outMeter[1].setBounds(rightMetersRight);
     mix->setBounds(bottomBounds);
 
-    outGainArea.translate(35,0);
+    outGainArea.translate(35,5);
     outGainArea.removeFromBottom(25);
     outGainArea.removeFromTop(25);
     outGainArea.removeFromRight(40);
-    outGainArea.removeFromTop(124);
+    outGainArea.removeFromTop(120);
     gainCompensator.setBounds(outGainArea);
 }
 
@@ -181,11 +181,10 @@ GainCompensator::GainCompensator(DistorKAudioProcessor& p) :
 
 void GainCompensator::paint(juce::Graphics &g)
 {
-    auto compensate = getCompensateValue();
     auto bounds = getLocalBounds();
-    g.setColour(juce::Colours::white);  
+    g.setColour(juce::Colours::white);
 
-    auto position = juce::jmap(compensate, -24.f, 0.f, (float)bounds.getHeight(), 5.f);
+    auto position = juce::jmap(getCompensateValue(), -24.f, 0.f, (float)bounds.getHeight(), 5.f);
     smoothValue.setTargetValue(position);
     
     juce::Point<float> tip, top, bottom;
@@ -203,5 +202,11 @@ float GainCompensator::getCompensateValue()
     auto inRMS = (audioP.levelMeterData.getRMS(0) + audioP.levelMeterData.getRMS(1))/2;
     auto outRMS = (audioP.zeroDbOutData.getOutRMS(0) + audioP.zeroDbOutData.getOutRMS(1))/2;
 
-    return inRMS - outRMS;
+    auto compensate = inRMS - outRMS;
+    if (compensate > 0)
+    {
+        compensate = 0;
+    }
+
+    return compensate;
 }
